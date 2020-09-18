@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
-* Студент: [Павел Томилин](https://up.htmlacademy.ru/javascript/21/user/1295561).
-* Наставник: `Неизвестно`.
+- Студент: [Павел Томилин](https://up.htmlacademy.ru/javascript/21/user/1295561).
+- Наставник: [Артем Доба](https://htmlacademy.ru/profile/id618431).
 
 ---
 
