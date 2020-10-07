@@ -1,10 +1,23 @@
 "use strict";
 // Личный проект: больше деталей (часть 1)
-
-const typesHotel = [`palace`, `flat`, `house`, `bungalow`];
-const timeCheckIn = [`12:00`, `13:00`, `14:00`];
-const timeCheckOut = [`12:00`, `13:00`, `14:00`];
-const features = [
+const TITLES = [
+  `Живописное место в центре города`,
+  `Уютное место для всей семьи`,
+  `Отличное жилье в спокойном районе`,
+  `Комфортабельное место в самом сердце города`,
+];
+const PRICES = [`2500`, `3000`, `3500`, `4000`];
+const ROOMS = [`1`, `2`, `3`];
+const GUESTS = [`1`, `2`, `3`, `5`];
+const DESCRIPTIONS = [
+  `Прекрасный вариант для путешественников, любящих природу, но при этом желающих находиться в комфортной близости от достопримечательностей`,
+  `Апартаменты находятся на втором этаже двухэтажного жилого модуля, со своим отдельным входом.`,
+  `Есть все необходимое для отличного времяпрепровождения`,
+];
+const TYPES_HOTEL = [`palace`, `flat`, `house`, `bungalow`];
+const TIME_CHECK_IN = [`12:00`, `13:00`, `14:00`];
+const TIME_CHECK_OUT = [`12:00`, `13:00`, `14:00`];
+const FEATURES = [
   `wifi`,
   `dishwasher`,
   `parking`,
@@ -12,43 +25,49 @@ const features = [
   `elevator`,
   `conditioner`,
 ];
-const addressImages = [
+const ADRESS_IMAGES = [
   `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
   `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
   `http://o0.github.io/assets/images/tokyo/hotel3.jpg`,
 ];
-const amountOfObjects = 8;
-const yCoordinateFrom = 130;
-const yCoordinateTo = 630;
-const map = document.querySelector(`.map`);
-const xCoordinateTo = map.offsetWidth;
-const mapPinHeight = 70;
-const mapPinWidth = 50;
-const mapPinCenter = mapPinWidth / 2;
-const hotels = getHotelArray();
 
-function getRandomNumber(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
+const AMOUNT_OF_OBJECTS = 8;
+const YCOORDINATE_FROM = 130;
+const YCOORDINATE_TO = 630;
+const MAPPIN_HEIGHT = 70;
+const MAPPIN_WIDTH = 50;
+const MAPPIN_CENTER = MAPPIN_WIDTH / 2;
+const map = document.querySelector(`.map`);
+const XCOORDINATE_TO = map.offsetWidth;
+
+const HOTELS = getHotelArray();
+
+function getRandomNumber(minValue, maxValue) {
+  let min = Math.ceil(minValue);
+  let max = Math.floor(maxValue);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function getRandomArr(arr) {
-  let randomArrLength = getRandomNumber(1, arr.length + 1);
+  let randomArrLength = getRandomNumber(1, arr.length);
 
   return arr.slice(0, randomArrLength);
 }
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 function returnsRandomData(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  return arr[getRandomInt(arr.length)];
 }
 
 function getCoordinateX() {
-  return getRandomNumber(mapPinWidth, xCoordinateTo - mapPinWidth);
+  return getRandomNumber(MAPPIN_WIDTH, XCOORDINATE_TO - MAPPIN_WIDTH);
 }
 
 function getCoordinateY() {
-  return getRandomNumber(yCoordinateFrom, yCoordinateTo);
+  return getRandomNumber(YCOORDINATE_FROM, YCOORDINATE_TO);
 }
 
 function getHotel(index) {
@@ -60,17 +79,17 @@ function getHotel(index) {
       avatar: `img/avatars/user0${index}.png`,
     },
     offer: {
-      title: `Заголовок объявления`,
+      title: returnsRandomData(TITLES),
       address: `${X}, ${Y}`,
-      price: 100,
-      type: returnsRandomData(typesHotel),
-      rooms: 100,
-      guests: 100,
-      checkin: returnsRandomData(timeCheckIn),
-      checkout: returnsRandomData(timeCheckOut),
-      features: getRandomArr(features),
-      description: `Описание объявления`,
-      photos: returnsRandomData(addressImages),
+      price: returnsRandomData(PRICES),
+      type: returnsRandomData(TYPES_HOTEL),
+      rooms: returnsRandomData(ROOMS),
+      guests: returnsRandomData(GUESTS),
+      checkin: returnsRandomData(TIME_CHECK_IN),
+      checkout: returnsRandomData(TIME_CHECK_OUT),
+      features: getRandomArr(FEATURES),
+      description: returnsRandomData(DESCRIPTIONS),
+      photos: returnsRandomData(ADRESS_IMAGES),
     },
     location: {
       x: X,
@@ -81,28 +100,50 @@ function getHotel(index) {
 
 function getHotelArray() {
   const array = [];
-  for (let i = 1; i < amountOfObjects + 1; i++) {
-    array.push(getHotel(i));
+  for (let i = 0; i < AMOUNT_OF_OBJECTS; i++) {
+    array.push(getHotel(i + 1));
   }
   return array;
 }
 
 map.classList.remove(`map--faded`);
+const hotelTemplate = document.querySelector(`#pin`);
 const mapPins = document.querySelector(`.map__pins`);
-const hotelTemplate = document
-  .querySelector(`#pin`)
-  .content.querySelector(`.map__pin`);
 
-hotels.forEach(function (item, i) {
-  const hotelElement = hotelTemplate.cloneNode(true);
-  const hotelAvatar = document.querySelector(`img`);
-  hotelElement.style.left = hotels[i].location.x - mapPinCenter + `px`;
+function renderMapPin(item) {
+  const hotelElement = hotelTemplate.content.cloneNode(true);
+  const mapPin = hotelElement.querySelector(`.map__pin`);
+  const hotelAvatar = mapPin.querySelector(`img`);
 
-  hotelElement.style.top = hotels[i].location.y - mapPinHeight + `px`;
-  hotelAvatar.src = hotels[i].author.avatar;
-  hotelAvatar.alt = hotels[i].offer.title;
+  hotelAvatar.src = item.author.avatar;
+  hotelAvatar.alt = item.offer.title;
+  mapPin.style.cssText = `left: ${item.location.x - MAPPIN_CENTER}px; top: ${
+    item.location.y - MAPPIN_HEIGHT
+  }px;`;
+  return hotelElement;
+}
+
+function renderFragmentMapPins() {
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < HOTELS.length; i++) {
+    fragment.appendChild(renderMapPin(HOTELS[i]));
+  }
+  return mapPins.appendChild(fragment);
+}
+renderFragmentMapPins();
+
+/*
+HOTELS.forEach(function (item, i) {
+  const hotelAvatar = hotelElement.querySelector(`img`);
+  hotelElement.style.left = HOTELS[i].location.x - MAPPIN_CENTER + `px`;
+
+  hotelElement.style.top = HOTELS[i].location.y - MAPPIN_HEIGHT + `px`;
+  hotelAvatar.src = HOTELS[i].author.avatar;
+  hotelAvatar.alt = HOTELS[i].offer.title;
 
   const hotelFragment = document.createDocumentFragment();
   hotelFragment.appendChild(hotelElement);
   mapPins.appendChild(hotelFragment);
 });
+*/
