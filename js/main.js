@@ -6,9 +6,9 @@ const TITLES = [
   `Отличное жилье в спокойном районе`,
   `Комфортабельное место в самом сердце города`,
 ];
-const PRICES = [`2500`, `3000`, `3500`, `4000`];
-const ROOMS = [`1`, `2`, `3`];
-const GUESTS = [`1`, `2`, `3`, `5`];
+const PRICES = [2500, 3000, 3500, 4000];
+const ROOMS = [1, 2, 3];
+const GUESTS = [1, 2, 3, 5];
 const DESCRIPTIONS = [
   `Прекрасный вариант для путешественников, любящих природу, но при этом желающих находиться в комфортной близости от достопримечательностей`,
   `Апартаменты находятся на втором этаже двухэтажного жилого модуля, со своим отдельным входом.`,
@@ -89,7 +89,7 @@ function getHotel(index) {
       checkout: returnsRandomData(TIME_CHECK_OUT),
       features: getRandomArr(FEATURES),
       description: returnsRandomData(DESCRIPTIONS),
-      photos: returnsRandomData(ADRESS_IMAGES),
+      photos: getRandomArr(ADRESS_IMAGES),
     },
     location: {
       x: X,
@@ -117,10 +117,9 @@ function renderMapPin(item) {
 
   hotelAvatar.src = item.author.avatar;
   hotelAvatar.alt = item.offer.title;
-  mapPin.style.cssText = `left: ${item.location.x - MAPPIN_CENTER}px; top: ${
-    item.location.y - MAPPIN_HEIGHT
-  }px;`;
+  mapPin.style.cssText = `left: ${item.location.x - MAPPIN_CENTER}px; top: ${item.location.y - MAPPIN_HEIGHT}px;`;
   return hotelElement;
+
 }
 
 function renderFragmentMapPins() {
@@ -132,18 +131,3 @@ function renderFragmentMapPins() {
   return mapPins.appendChild(fragment);
 }
 renderFragmentMapPins();
-
-/*
-HOTELS.forEach(function (item, i) {
-  const hotelAvatar = hotelElement.querySelector(`img`);
-  hotelElement.style.left = HOTELS[i].location.x - MAPPIN_CENTER + `px`;
-
-  hotelElement.style.top = HOTELS[i].location.y - MAPPIN_HEIGHT + `px`;
-  hotelAvatar.src = HOTELS[i].author.avatar;
-  hotelAvatar.alt = HOTELS[i].offer.title;
-
-  const hotelFragment = document.createDocumentFragment();
-  hotelFragment.appendChild(hotelElement);
-  mapPins.appendChild(hotelFragment);
-});
-*/
