@@ -119,7 +119,6 @@ function renderMapPin(item) {
   hotelAvatar.alt = item.offer.title;
   mapPin.style.cssText = `left: ${item.location.x - MAPPIN_CENTER}px; top: ${item.location.y - MAPPIN_HEIGHT}px;`;
   return hotelElement;
-
 }
 
 function renderFragmentMapPins() {
@@ -131,3 +130,60 @@ function renderFragmentMapPins() {
   return mapPins.appendChild(fragment);
 }
 renderFragmentMapPins();
+
+// Личный проект: больше деталей (часть 2)
+
+const cardTemplate = document.querySelector(`#card`);
+
+const firstCard = HOTELS[0];
+
+function renderCard() {
+  let cardElement = cardTemplate.content.cloneNode(true);
+  cardElement.querySelector(`.popup__title`).textContent = firstCard.offer.title;
+  cardElement.querySelector(`.popup__text--address`).textContent = firstCard.offer.address;
+  cardElement.querySelector(`.popup__text--price`).textContent = `${firstCard.offer.price} ₽/ночь`;
+  cardElement.querySelector(`.popup__type`).textContent = firstCard.offer.type;
+  cardElement.querySelector(`.popup__text--capacity`).textContent = `${firstCard.offer.rooms} комнаты для ${firstCard.offer.guests} гостей`;
+  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${firstCard.offer.checkin}, выезд до ${firstCard.offer.checkout}`;
+
+  const cardFeatures = cardElement.querySelector(`.popup__features`);
+
+  // вывод доступных удобств
+  while (cardFeatures.firstChild) {
+    cardFeatures.removeChild(cardFeatures.firstChild);
+  }
+
+  for (let i = 0; i < firstCard.offer.features.length; i++) {
+    let item = document.createElement(`li`);
+    item.classList.add(`popup__feature`);
+    item.classList.add(`popup__feature--${firstCard.offer.features[i]}`);
+    cardFeatures.appendChild(item);
+  }
+
+  cardElement.querySelector(`.popup__description`).textContent =
+    firstCard.offer.description;
+
+  const cardPhotos = cardElement.querySelector(`.popup__photos`);
+
+  // добавление фотографий
+  const img = cardPhotos.querySelector(`.popup__photo`);
+  cardPhotos.removeChild(img);
+
+  let insertedImg;
+  for (let j = 0; j < firstCard.offer.photos.length; j++) {
+    insertedImg = img.cloneNode(true);
+    insertedImg.src = firstCard.offer.photos[j];
+    cardPhotos.appendChild(insertedImg);
+  }
+
+  cardElement.querySelector(`.popup__avatar`).src = firstCard.author.avatar;
+
+  return cardElement;
+}
+
+// функция вставки карточки в DOM
+function insertCard() {
+  const mapFiltersContainer = map.querySelector(`.map__filters-container`);
+  map.insertBefore(renderCard(), mapFiltersContainer);
+}
+insertCard();
