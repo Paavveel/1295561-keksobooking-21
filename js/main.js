@@ -14,7 +14,12 @@ const DESCRIPTIONS = [
   `Апартаменты находятся на втором этаже двухэтажного жилого модуля, со своим отдельным входом.`,
   `Есть все необходимое для отличного времяпрепровождения`,
 ];
-const TYPES_HOTEL = [`palace`, `flat`, `house`, `bungalow`];
+const TYPES_HOTEL = {
+  palace: `Дворец`,
+  flat: `Квартира`,
+  house: `Дом`,
+  bungalow: `Бунгало`
+};
 const TIME_CHECK_IN = [`12:00`, `13:00`, `14:00`];
 const TIME_CHECK_OUT = [`12:00`, `13:00`, `14:00`];
 const FEATURES = [
@@ -82,7 +87,7 @@ function getHotel(index) {
       title: returnsRandomData(TITLES),
       address: `${X}, ${Y}`,
       price: returnsRandomData(PRICES),
-      type: returnsRandomData(TYPES_HOTEL),
+      type: returnsRandomData(Object.values(TYPES_HOTEL)),
       rooms: returnsRandomData(ROOMS),
       guests: returnsRandomData(GUESTS),
       checkin: returnsRandomData(TIME_CHECK_IN),
