@@ -269,7 +269,7 @@ resetButton.addEventListener(`click`, function () {
   removePins();
   adForm.classList.add(`ad-form--disabled`);
   map.classList.add(`map--faded`);
-
+  setCoordinates(false);
 });
 
 // Заполнение поля адреса
@@ -316,9 +316,9 @@ const selectType = document.querySelector(`#type`);
 let typeOfHouse = `flat`;
 
 const priceOfType = {
-  'bungalow': 2500,
-  'flat': 5000,
-  'house': 8000,
+  'bungalow': 0,
+  'flat': 1000,
+  'house': 5000,
   'palace': 10000
 };
 
