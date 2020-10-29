@@ -46,6 +46,7 @@ const map = document.querySelector(`.map`);
 const XCOORDINATE_TO = map.offsetWidth;
 
 const KEY_ENTER = `Enter`;
+const KEY_ESCAPE = `Escape`;
 
 const HOTELS = getHotelArray();
 
@@ -117,22 +118,49 @@ function getHotelArray() {
 const hotelTemplate = document.querySelector(`#pin`);
 const mapPins = document.querySelector(`.map__pins`);
 
-function renderMapPin(item) {
+// функция рендеринга метки объявления
+function renderPins(index) {
   const hotelElement = hotelTemplate.content.cloneNode(true);
   const mapPin = hotelElement.querySelector(`.map__pin`);
   const hotelAvatar = mapPin.querySelector(`img`);
+  const currentHotel = HOTELS[index];
 
-  hotelAvatar.src = item.author.avatar;
-  hotelAvatar.alt = item.offer.title;
-  mapPin.style.cssText = `left: ${item.location.x - MAPPIN_CENTER}px; top: ${item.location.y - MAPPIN_HEIGHT}px;`;
+  hotelAvatar.src = currentHotel.author.avatar;
+  hotelAvatar.alt = currentHotel.offer.title;
+  mapPin.style.cssText = `left: ${currentHotel.location.x - MAPPIN_CENTER}px; top: ${currentHotel.location.y - MAPPIN_HEIGHT}px;`;
+  mapPin.dataset.id = index;
+
   return hotelElement;
 }
+
+map.addEventListener(`click`, function (evt) {
+  const mapPinActive = document.querySelector(`.map__pin--active`);
+  const prevCard = document.querySelector(`.map__card`);
+  if (evt.target.classList.contains(`map__pin`) && !evt.target.classList.contains(`map__pin--main`)) {
+    if (mapPinActive) {
+      mapPinActive.classList.remove(`map__pin--active`);
+      prevCard.remove();
+    }
+
+    renderCard(evt.target.dataset.id);
+    evt.target.classList.add(`map__pin--active`);
+
+  } else if (evt.target.parentElement.classList.contains(`map__pin`) && !evt.target.parentElement.classList.contains(`map__pin--main`)) {
+    if (mapPinActive) {
+      mapPinActive.classList.remove(`map__pin--active`);
+      prevCard.remove();
+    }
+
+    renderCard(evt.target.parentElement.dataset.id);
+    evt.target.parentElement.classList.add(`map__pin--active`);
+  }
+});
 
 function renderFragmentMapPins() {
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < HOTELS.length; i++) {
-    fragment.appendChild(renderMapPin(HOTELS[i]));
+    fragment.appendChild(renderPins(i));
   }
   return mapPins.appendChild(fragment);
 }
@@ -140,18 +168,17 @@ function renderFragmentMapPins() {
 
 // Личный проект: больше деталей (часть 2)
 
-/* const cardTemplate = document.querySelector(`#card`);
-
-const firstCard = HOTELS[0];
-
-function renderCard() {
-  let cardElement = cardTemplate.content.cloneNode(true);
-  cardElement.querySelector(`.popup__title`).textContent = firstCard.offer.title;
-  cardElement.querySelector(`.popup__text--address`).textContent = firstCard.offer.address;
-  cardElement.querySelector(`.popup__text--price`).textContent = `${firstCard.offer.price} ₽/ночь`;
-  cardElement.querySelector(`.popup__type`).textContent = firstCard.offer.type;
-  cardElement.querySelector(`.popup__text--capacity`).textContent = `${firstCard.offer.rooms} комнаты для ${firstCard.offer.guests} гостей`;
-  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${firstCard.offer.checkin}, выезд до ${firstCard.offer.checkout}`;
+const cardTemplate = document.querySelector(`#card`);
+// функция рендеринга карточки
+function renderCard(index) {
+  const currentHotel = HOTELS[index];
+  let cardElement = cardTemplate.content.querySelector(`.map__card`).cloneNode(true);
+  cardElement.querySelector(`.popup__title`).textContent = currentHotel.offer.title;
+  cardElement.querySelector(`.popup__text--address`).textContent = currentHotel.offer.address;
+  cardElement.querySelector(`.popup__text--price`).textContent = `${currentHotel.offer.price} ₽/ночь`;
+  cardElement.querySelector(`.popup__type`).textContent = currentHotel.offer.type;
+  cardElement.querySelector(`.popup__text--capacity`).textContent = `${currentHotel.offer.rooms} комнаты для ${currentHotel.offer.guests} гостей`;
+  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${currentHotel.offer.checkin}, выезд до ${currentHotel.offer.checkout}`;
 
   const cardFeatures = cardElement.querySelector(`.popup__features`);
 
@@ -160,15 +187,14 @@ function renderCard() {
     cardFeatures.removeChild(cardFeatures.firstChild);
   }
 
-  for (let i = 0; i < firstCard.offer.features.length; i++) {
+  for (let i = 0; i < currentHotel.offer.features.length; i++) {
     let item = document.createElement(`li`);
     item.classList.add(`popup__feature`);
-    item.classList.add(`popup__feature--${firstCard.offer.features[i]}`);
+    item.classList.add(`popup__feature--${currentHotel.offer.features[i]}`);
     cardFeatures.appendChild(item);
   }
 
-  cardElement.querySelector(`.popup__description`).textContent =
-    firstCard.offer.description;
+  cardElement.querySelector(`.popup__description`).textContent = currentHotel.offer.description;
 
   const cardPhotos = cardElement.querySelector(`.popup__photos`);
 
@@ -177,29 +203,42 @@ function renderCard() {
   cardPhotos.removeChild(img);
 
   let insertedImg;
-  for (let j = 0; j < firstCard.offer.photos.length; j++) {
+  for (let j = 0; j < currentHotel.offer.photos.length; j++) {
     insertedImg = img.cloneNode(true);
-    insertedImg.src = firstCard.offer.photos[j];
+    insertedImg.src = currentHotel.offer.photos[j];
     cardPhotos.appendChild(insertedImg);
   }
 
-  cardElement.querySelector(`.popup__avatar`).src = firstCard.author.avatar;
+  cardElement.querySelector(`.popup__avatar`).src = currentHotel.author.avatar;
 
-  return cardElement;
+  const buttonClose = cardElement.querySelector(`.popup__close`);
+
+
+  buttonClose.addEventListener(`click`, function (evt) {
+    const mapPinActive = document.querySelector(`.map__pin--active`);
+    if (evt.button === 0 || evt.key === KEY_ENTER) {
+      cardElement.remove();
+      mapPinActive.classList.remove(`map__pin--active`);
+    }
+  });
+
+  document.addEventListener(`keydown`, function (evt) {
+    const mapPinActive = document.querySelector(`.map__pin--active`);
+    if (evt.key === KEY_ESCAPE) {
+      evt.preventDefault();
+      cardElement.remove();
+      mapPinActive.classList.remove(`map__pin--active`);
+    }
+  });
+
+  map.appendChild(cardElement);
 }
 
-// функция вставки карточки в DOM
-function insertCard() {
-  const mapFiltersContainer = map.querySelector(`.map__filters-container`);
-  map.insertBefore(renderCard(), mapFiltersContainer);
-}
-insertCard(); */
 
 // Личный проект: доверяй, но проверяй (часть 1)
 
 const adForm = document.querySelector(`.ad-form`);
 const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
-// const mapCards = document.querySelectorAll(`.map__card`);
 
 const mapPinMain = document.querySelector(`.map__pin--main`);
 const resetButton = document.querySelector(`.ad-form__reset`);
@@ -240,8 +279,8 @@ const activatePage = function () {
   showElements();
   adForm.classList.remove(`ad-form--disabled`);
   map.classList.remove(`map--faded`);
-
   setCoordinates(true);
+  mapPinMain.removeEventListener(`click`, mapPinMainClick);
 };
 
 
@@ -252,9 +291,7 @@ function mapPinMainClick(evt) {
   }
 }
 
-mapPinMain.addEventListener(`click`, function (evt) {
-  mapPinMainClick(evt);
-});
+mapPinMain.addEventListener(`click`, mapPinMainClick);
 
 function removePins() {
   const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
@@ -270,6 +307,13 @@ resetButton.addEventListener(`click`, function () {
   adForm.classList.add(`ad-form--disabled`);
   map.classList.add(`map--faded`);
   setCoordinates(false);
+  const prevCard = document.querySelector(`.map__card`);
+  mapPinMain.addEventListener(`click`, mapPinMainClick);
+
+  if (prevCard) {
+    prevCard.remove();
+  }
+
 });
 
 // Заполнение поля адреса
@@ -387,3 +431,18 @@ capacity.addEventListener(`change`, function (evt) {
   typeOfCapacity(evt.target);
 });
 
+const timeIn = document.querySelector(`#timein`);
+const timeOut = document.querySelector(`#timeout`);
+
+timeOut.addEventListener(`change`, function () {
+  timeIn.value = timeOut.value;
+});
+timeIn.addEventListener(`change`, function () {
+  timeOut.value = timeIn.value;
+});
+
+const inputFileAvatar = document.querySelector(`#avatar`);
+const inputFileImages = document.querySelector(`#images`);
+
+inputFileAvatar.setAttribute(`accept`, `image/*`);
+inputFileImages.setAttribute(`accept`, `image/*`);
