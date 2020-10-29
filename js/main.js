@@ -123,22 +123,38 @@ function renderPins(index) {
   const hotelElement = hotelTemplate.content.cloneNode(true);
   const mapPin = hotelElement.querySelector(`.map__pin`);
   const hotelAvatar = mapPin.querySelector(`img`);
+  const currentHotel = HOTELS[index];
 
-  hotelAvatar.src = HOTELS[index].author.avatar;
-  hotelAvatar.alt = HOTELS[index].offer.title;
-  mapPin.style.cssText = `left: ${HOTELS[index].location.x - MAPPIN_CENTER}px; top: ${HOTELS[index].location.y - MAPPIN_HEIGHT}px;`;
-
-  mapPin.addEventListener(`click`, function () {
-    const prevCard = document.querySelector(`.map__card`);
-    if (prevCard) {
-      prevCard.remove(); // удаляем модальное окно с информацией об объявлении, если есть
-    }
-    renderCard(index); // передаем данные, конкретного блока которые можно отрисовать
-
-  });
+  hotelAvatar.src = currentHotel.author.avatar;
+  hotelAvatar.alt = currentHotel.offer.title;
+  mapPin.style.cssText = `left: ${currentHotel.location.x - MAPPIN_CENTER}px; top: ${currentHotel.location.y - MAPPIN_HEIGHT}px;`;
+  mapPin.dataset.id = index;
 
   return hotelElement;
 }
+
+map.addEventListener(`click`, function (evt) {
+  const mapPinActive = document.querySelector(`.map__pin--active`);
+  const prevCard = document.querySelector(`.map__card`);
+  if (evt.target.classList.contains(`map__pin`) && !evt.target.classList.contains(`map__pin--main`)) {
+    if (mapPinActive) {
+      mapPinActive.classList.remove(`map__pin--active`);
+      prevCard.remove();
+    }
+
+    renderCard(evt.target.dataset.id);
+    evt.target.classList.add(`map__pin--active`);
+
+  } else if (evt.target.parentElement.classList.contains(`map__pin`) && !evt.target.parentElement.classList.contains(`map__pin--main`)) {
+    if (mapPinActive) {
+      mapPinActive.classList.remove(`map__pin--active`);
+      prevCard.remove();
+    }
+
+    renderCard(evt.target.parentElement.dataset.id);
+    evt.target.parentElement.classList.add(`map__pin--active`);
+  }
+});
 
 function renderFragmentMapPins() {
   const fragment = document.createDocumentFragment();
@@ -155,13 +171,14 @@ function renderFragmentMapPins() {
 const cardTemplate = document.querySelector(`#card`);
 // функция рендеринга карточки
 function renderCard(index) {
+  const currentHotel = HOTELS[index];
   let cardElement = cardTemplate.content.querySelector(`.map__card`).cloneNode(true);
-  cardElement.querySelector(`.popup__title`).textContent = HOTELS[index].offer.title;
-  cardElement.querySelector(`.popup__text--address`).textContent = HOTELS[index].offer.address;
-  cardElement.querySelector(`.popup__text--price`).textContent = `${HOTELS[index].offer.price} ₽/ночь`;
-  cardElement.querySelector(`.popup__type`).textContent = HOTELS[index].offer.type;
-  cardElement.querySelector(`.popup__text--capacity`).textContent = `${HOTELS[index].offer.rooms} комнаты для ${HOTELS[index].offer.guests} гостей`;
-  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${HOTELS[index].offer.checkin}, выезд до ${HOTELS[index].offer.checkout}`;
+  cardElement.querySelector(`.popup__title`).textContent = currentHotel.offer.title;
+  cardElement.querySelector(`.popup__text--address`).textContent = currentHotel.offer.address;
+  cardElement.querySelector(`.popup__text--price`).textContent = `${currentHotel.offer.price} ₽/ночь`;
+  cardElement.querySelector(`.popup__type`).textContent = currentHotel.offer.type;
+  cardElement.querySelector(`.popup__text--capacity`).textContent = `${currentHotel.offer.rooms} комнаты для ${currentHotel.offer.guests} гостей`;
+  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${currentHotel.offer.checkin}, выезд до ${currentHotel.offer.checkout}`;
 
   const cardFeatures = cardElement.querySelector(`.popup__features`);
 
@@ -170,14 +187,14 @@ function renderCard(index) {
     cardFeatures.removeChild(cardFeatures.firstChild);
   }
 
-  for (let i = 0; i < HOTELS[index].offer.features.length; i++) {
+  for (let i = 0; i < currentHotel.offer.features.length; i++) {
     let item = document.createElement(`li`);
     item.classList.add(`popup__feature`);
-    item.classList.add(`popup__feature--${HOTELS[index].offer.features[i]}`);
+    item.classList.add(`popup__feature--${currentHotel.offer.features[i]}`);
     cardFeatures.appendChild(item);
   }
 
-  cardElement.querySelector(`.popup__description`).textContent = HOTELS[index].offer.description;
+  cardElement.querySelector(`.popup__description`).textContent = currentHotel.offer.description;
 
   const cardPhotos = cardElement.querySelector(`.popup__photos`);
 
@@ -186,30 +203,31 @@ function renderCard(index) {
   cardPhotos.removeChild(img);
 
   let insertedImg;
-  for (let j = 0; j < HOTELS[index].offer.photos.length; j++) {
+  for (let j = 0; j < currentHotel.offer.photos.length; j++) {
     insertedImg = img.cloneNode(true);
-    insertedImg.src = HOTELS[index].offer.photos[j];
+    insertedImg.src = currentHotel.offer.photos[j];
     cardPhotos.appendChild(insertedImg);
   }
 
-  cardElement.querySelector(`.popup__avatar`).src = HOTELS[index].author.avatar;
+  cardElement.querySelector(`.popup__avatar`).src = currentHotel.author.avatar;
 
-  const buttonClose = cardElement.querySelector(`.popup__close`); // закрытие по нажатию иконки закрытия
+  const buttonClose = cardElement.querySelector(`.popup__close`);
 
-  buttonClose.addEventListener(`click`, function () {
-    cardElement.remove();
-  });
 
-  buttonClose.addEventListener(`keydown`, function (evt) { // закрытие окна по нажатию кнопки ENTER, когда кнопка закрытия в фокусе
-    if (evt.key === KEY_ENTER) {
+  buttonClose.addEventListener(`click`, function (evt) {
+    const mapPinActive = document.querySelector(`.map__pin--active`);
+    if (evt.button === 0 || evt.key === KEY_ENTER) {
       cardElement.remove();
+      mapPinActive.classList.remove(`map__pin--active`);
     }
   });
 
-  document.addEventListener(`keydown`, function (evt) { // закрытие окна по нажатию кнопки ESCAPE
+  document.addEventListener(`keydown`, function (evt) {
+    const mapPinActive = document.querySelector(`.map__pin--active`);
     if (evt.key === KEY_ESCAPE) {
       evt.preventDefault();
       cardElement.remove();
+      mapPinActive.classList.remove(`map__pin--active`);
     }
   });
 
@@ -243,7 +261,6 @@ const disableElements = function () {
 
 const showElements = function () {
   removeAttribute(disabledFormElements, `disabled`);
-  renderCard(0);
 };
 
 function resetForms() {
@@ -262,8 +279,8 @@ const activatePage = function () {
   showElements();
   adForm.classList.remove(`ad-form--disabled`);
   map.classList.remove(`map--faded`);
-  mapPinMain.setAttribute(`disabled`, ``);
   setCoordinates(true);
+  mapPinMain.removeEventListener(`click`, mapPinMainClick);
 };
 
 
@@ -274,9 +291,7 @@ function mapPinMainClick(evt) {
   }
 }
 
-mapPinMain.addEventListener(`click`, function (evt) {
-  mapPinMainClick(evt);
-});
+mapPinMain.addEventListener(`click`, mapPinMainClick);
 
 function removePins() {
   const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
@@ -293,10 +308,12 @@ resetButton.addEventListener(`click`, function () {
   map.classList.add(`map--faded`);
   setCoordinates(false);
   const prevCard = document.querySelector(`.map__card`);
+  mapPinMain.addEventListener(`click`, mapPinMainClick);
+
   if (prevCard) {
-    prevCard.remove(); // удаляем модальное окно с информацией об объявлении, если есть
+    prevCard.remove();
   }
-  mapPinMain.removeAttribute(`disabled`, ``);
+
 });
 
 // Заполнение поля адреса
@@ -423,3 +440,9 @@ timeOut.addEventListener(`change`, function () {
 timeIn.addEventListener(`change`, function () {
   timeOut.value = timeIn.value;
 });
+
+const inputFileAvatar = document.querySelector(`#avatar`);
+const inputFileImages = document.querySelector(`#images`);
+
+inputFileAvatar.setAttribute(`accept`, `image/*`);
+inputFileImages.setAttribute(`accept`, `image/*`);
