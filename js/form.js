@@ -3,7 +3,7 @@
 (function () {
   const map = window.data.map;
   const KEY_ENTER = window.util.KEY_ENTER;
-  let getHotelArray = window.data.getHotelArray;
+  const getHotelArray = window.data.getHotelArray;
   const renderFragmentMapPins = window.map.renderFragmentMapPins;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
@@ -49,15 +49,6 @@
   }
 
 
-  function mapPinMainClick(evt) {
-    if (evt.button === 0 || evt.key === KEY_ENTER) {
-      evt.preventDefault();
-      activatePage();
-    }
-  }
-
-  mapPinMain.addEventListener(`click`, mapPinMainClick);
-
   resetButton.addEventListener(`click`, function () {
     resetForms();
     disableElements();
@@ -101,6 +92,16 @@
     setCoordinates(true);
     mapPinMain.removeEventListener(`click`, mapPinMainClick);
   };
+
+  function mapPinMainClick(evt) {
+    if (evt.button === 0 || evt.key === KEY_ENTER) {
+      evt.preventDefault();
+      activatePage();
+    }
+  }
+
+  mapPinMain.addEventListener(`click`, mapPinMainClick);
+
 
   const MIN_NAME_LENGTH = 30;
   const MAX_NAME_LENGTH = 100;
@@ -216,6 +217,6 @@
     adForm,
     mapPinMain,
     showElements,
-    setCoordinates,
+    setCoordinates
   };
 })();
