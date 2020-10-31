@@ -93,7 +93,9 @@
     map.classList.remove(`map--faded`);
     setCoordinates(true);
     mapPinMain.removeEventListener(`click`, mapPinMainClick);
+
     mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
+
   };
 
   function mapPinMainClick(evt) {
@@ -102,6 +104,7 @@
       activatePage();
     }
   }
+
 
   function mapPinMainMouseDown(evt) {
     evt.preventDefault();
