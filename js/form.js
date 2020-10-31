@@ -5,9 +5,16 @@
   const KEY_ENTER = window.util.KEY_ENTER;
   const getHotelArray = window.data.getHotelArray;
   const renderFragmentMapPins = window.map.renderFragmentMapPins;
+  const guestCapacity = window.data.guestCapacity;
+  const guestValidation = window.data.guestValidation;
+  const priceOfType = window.data.priceOfType;
+  let typeOfHouse = window.data.typeOfHouse;
+  let typeOfRoom = window.data.typeOfRoom;
+  const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
+  const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
+  const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
-
   const mapPinMain = document.querySelector(`.map__pin--main`);
   const resetButton = document.querySelector(`.ad-form__reset`);
 
@@ -38,8 +45,6 @@
     }
   }
 
-  disableElements(); // по дефолту запущена
-
 
   function removePins() {
     const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
@@ -67,9 +72,6 @@
 
   // Заполнение поля адреса
   const inputAddress = document.querySelector(`#address`);
-
-  const MAIN_ARROW_HEIGHT = 16;
-
 
   function setCoordinates(isPageActive) {
     const distanceLeft = mapPinMain.offsetLeft;
@@ -100,11 +102,6 @@
     }
   }
 
-  mapPinMain.addEventListener(`click`, mapPinMainClick);
-
-
-  const MIN_NAME_LENGTH = 30;
-  const MAX_NAME_LENGTH = 100;
   const inputTitle = document.querySelector(`#title`);
 
   inputTitle.addEventListener(`input`, function (evt) {
@@ -123,14 +120,6 @@
 
   const inputPrice = document.querySelector(`#price`);
   const selectType = document.querySelector(`#type`);
-  let typeOfHouse = `flat`;
-
-  const priceOfType = {
-    'bungalow': 0,
-    'flat': 1000,
-    'house': 5000,
-    'palace': 10000
-  };
 
   let priceValidation = function (target) {
     const value = target.value;
@@ -158,22 +147,6 @@
 
   const roomNumber = document.querySelector(`#room_number`);
   const capacity = document.querySelector(`#capacity`);
-
-  const guestCapacity = {
-    '1': [`1`],
-    '2': [`1`, `2`],
-    '3': [`1`, `2`, `3`],
-    '100': [`0`]
-  };
-
-  let typeOfRoom = `1`;
-
-  const guestValidation = {
-    '1': `Только на одного гостя`,
-    '2': `Только на одного или двух гостей`,
-    '3': `Только на одного, двух или трех гостей`,
-    '100': `Только не для гостей`
-  };
 
   const typeOfCapacity = function (target) {
     const value = target.value;
@@ -217,6 +190,8 @@
     adForm,
     mapPinMain,
     showElements,
-    setCoordinates
+    setCoordinates,
+    mapPinMainClick,
+    disableElements
   };
 })();
