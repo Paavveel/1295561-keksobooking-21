@@ -1,0 +1,156 @@
+'use strict';
+
+(function () {
+  const TYPES_HOTEL = {
+    palace: `Дворец`,
+    flat: `Квартира`,
+    house: `Дом`,
+    bungalow: `Бунгало`
+  };
+
+  const TITLES = [
+    `Живописное место в центре города`,
+    `Уютное место для всей семьи`,
+    `Отличное жилье в спокойном районе`,
+    `Комфортабельное место в самом сердце города`,
+  ];
+  const PRICES = [2500, 3000, 3500, 4000];
+  const ROOMS = [1, 2, 3];
+  const GUESTS = [1, 2, 3, 5];
+  const DESCRIPTIONS = [
+    `Прекрасный вариант для путешественников, любящих природу, но при этом желающих находиться в комфортной близости от достопримечательностей`,
+    `Апартаменты находятся на втором этаже двухэтажного жилого модуля, со своим отдельным входом.`,
+    `Есть все необходимое для отличного времяпрепровождения`,
+  ];
+
+  const TIME_CHECK_IN = [`12:00`, `13:00`, `14:00`];
+  const TIME_CHECK_OUT = [`12:00`, `13:00`, `14:00`];
+  const FEATURES = [
+    `wifi`,
+    `dishwasher`,
+    `parking`,
+    `washer`,
+    `elevator`,
+    `conditioner`,
+  ];
+  const ADRESS_IMAGES = [
+    `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
+    `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
+    `http://o0.github.io/assets/images/tokyo/hotel3.jpg`,
+  ];
+  const map = document.querySelector(`.map`);
+  const AMOUNT_OF_OBJECTS = 8;
+  const YCOORDINATE_FROM = 130;
+  const YCOORDINATE_TO = 630;
+  const XCOORDINATE_TO = map.offsetWidth;
+
+  const MAPPIN_HEIGHT = 70;
+  const MAPPIN_WIDTH = 50;
+  const MAPPIN_CENTER = MAPPIN_WIDTH / 2;
+
+  const getRandomNumber = window.util.getRandomNumber;
+  const returnsRandomData = window.util.returnsRandomData;
+  const getRandomArr = window.util.getRandomArr;
+
+  const HOTELS = getHotelArray();
+
+  function getCoordinateX() {
+    return getRandomNumber(MAPPIN_WIDTH, XCOORDINATE_TO - MAPPIN_WIDTH);
+  }
+
+  function getCoordinateY() {
+    return getRandomNumber(YCOORDINATE_FROM, YCOORDINATE_TO);
+  }
+
+  function getHotel(index) {
+    let X = getCoordinateX();
+    let Y = getCoordinateY();
+
+    return {
+      author: {
+        avatar: `img/avatars/user0${index}.png`,
+      },
+      offer: {
+        title: returnsRandomData(TITLES),
+        address: `${X}, ${Y}`,
+        price: returnsRandomData(PRICES),
+        type: returnsRandomData(Object.values(TYPES_HOTEL)),
+        rooms: returnsRandomData(ROOMS),
+        guests: returnsRandomData(GUESTS),
+        checkin: returnsRandomData(TIME_CHECK_IN),
+        checkout: returnsRandomData(TIME_CHECK_OUT),
+        features: getRandomArr(FEATURES),
+        description: returnsRandomData(DESCRIPTIONS),
+        photos: getRandomArr(ADRESS_IMAGES),
+      },
+      location: {
+        x: X,
+        y: Y,
+      },
+    };
+  }
+
+  function getHotelArray() {
+    const array = [];
+    for (let i = 0; i < AMOUNT_OF_OBJECTS; i++) {
+      array.push(getHotel(i + 1));
+    }
+    return array;
+  }
+
+  const guestCapacity = {
+    '1': [`1`],
+    '2': [`1`, `2`],
+    '3': [`1`, `2`, `3`],
+    '100': [`0`]
+  };
+
+  const guestValidation = {
+    '1': `Только на одного гостя`,
+    '2': `Только на одного или двух гостей`,
+    '3': `Только на одного, двух или трех гостей`,
+    '100': `Только не для гостей`
+  };
+
+  const priceOfType = {
+    'bungalow': 0,
+    'flat': 1000,
+    'house': 5000,
+    'palace': 10000
+  };
+
+  let typeOfHouse = `flat`;
+  let typeOfRoom = `1`;
+  const MAIN_ARROW_HEIGHT = 16;
+  const MIN_NAME_LENGTH = 30;
+  const MAX_NAME_LENGTH = 100;
+
+  window.data = {
+    TYPES_HOTEL,
+    TITLES,
+    PRICES,
+    ROOMS,
+    GUESTS,
+    DESCRIPTIONS,
+    TIME_CHECK_IN,
+    TIME_CHECK_OUT,
+    FEATURES,
+    ADRESS_IMAGES,
+    HOTELS,
+    getHotel,
+    getHotelArray,
+    map,
+    MAPPIN_HEIGHT,
+    MAPPIN_WIDTH,
+    MAPPIN_CENTER,
+    guestCapacity,
+    guestValidation,
+    priceOfType,
+    typeOfHouse,
+    typeOfRoom,
+    MAIN_ARROW_HEIGHT,
+    MIN_NAME_LENGTH,
+    MAX_NAME_LENGTH
+  };
+
+})();
