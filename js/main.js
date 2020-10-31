@@ -8,4 +8,5 @@
   mapPinMain.addEventListener(`click`, mapPinMainClick);
 
   disableElements();
+
 })();
