@@ -128,6 +128,7 @@
         y: moveEvt.clientY
       };
 
+
       mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + `px`;
       mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + `px`;
 
