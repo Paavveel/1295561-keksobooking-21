@@ -84,6 +84,7 @@
     inputAddress.value = `${mainPinX}, ${mainPinY}`;
   }
 
+  setCoordinates(false);
 
   const activatePage = function () {
     getHotelArray();
@@ -105,6 +106,16 @@
     }
   }
 
+  const Coordinates = {
+    x: {
+      min: 0,
+      max: map.offsetWidth
+    },
+    y: {
+      min: 130,
+      max: 630
+    }
+  };
 
   function mapPinMainMouseDown(evt) {
     evt.preventDefault();
@@ -131,9 +142,21 @@
         y: moveEvt.clientY
       };
 
-
       mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + `px`;
       mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + `px`;
+
+      if (mapPinMain.offsetLeft < Coordinates.x.min - mapPinMain.offsetWidth / 2) {
+        mapPinMain.style.left = (Coordinates.x.min - mapPinMain.offsetWidth / 2) + `px`;
+      } else if (mapPinMain.offsetLeft > Coordinates.x.max - mapPinMain.offsetWidth / 2) {
+        mapPinMain.style.left = (Coordinates.x.max - mapPinMain.offsetWidth / 2) + `px`;
+      }
+
+      if (mapPinMain.offsetTop < Coordinates.y.min - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT) {
+        mapPinMain.style.top = Coordinates.y.min - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT + `px`;
+      } else if (mapPinMain.offsetTop > Coordinates.y.max - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT) {
+        mapPinMain.style.top = Coordinates.y.max - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT + `px`;
+      }
+
 
     };
 
