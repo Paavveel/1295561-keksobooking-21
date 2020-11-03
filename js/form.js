@@ -3,8 +3,7 @@
 (function () {
   const map = window.data.map;
   const KEY_ENTER = window.util.KEY_ENTER;
-  const getHotelArray = window.data.getHotelArray;
-  const renderFragmentMapPins = window.map.renderFragmentMapPins;
+  const renderFragmentMapPins = window.pin.renderFragmentMapPins;
   const guestCapacity = window.data.guestCapacity;
   const guestValidation = window.data.guestValidation;
   const priceOfType = window.data.priceOfType;
@@ -13,6 +12,7 @@
   const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
   const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
   const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
+  // const renderPins = window.pin.renderPins;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
   const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -34,17 +34,12 @@
     addAttribute(disabledFormElements, `disabled`);
   };
 
-  const showElements = function () {
-    removeAttribute(disabledFormElements, `disabled`);
-  };
-
   function resetForms() {
     const forms = document.querySelectorAll(`form`);
     for (let i = 0; i < forms.length; i++) {
       forms[i].reset();
     }
   }
-
 
   function removePins() {
     const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
@@ -86,18 +81,33 @@
 
   setCoordinates(false);
 
-  const activatePage = function () {
-    getHotelArray();
-    renderFragmentMapPins();
-    showElements();
+  const showElements = function (data) {
+    removeAttribute(disabledFormElements, `disabled`);
+    renderFragmentMapPins(data);
     adForm.classList.remove(`ad-form--disabled`);
     map.classList.remove(`map--faded`);
     setCoordinates(true);
-    mapPinMain.removeEventListener(`click`, mapPinMainClick);
 
     mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
+    mapPinMain.removeEventListener(`click`, mapPinMainClick);
+  };
+
+  const activatePage = function (data) {
+    mapPinMain.addEventListener(`click`, mapPinMainClick);
+    showElements(data);
 
   };
+
+  const onError = function (message) {
+    console.error(message);
+
+  };
+  const onSuccess = function (data) {
+    activatePage(data);
+
+
+  };
+  window.load(`https://21.javascript.pages.academy/keksobooking/data`, onSuccess, onError);
 
   function mapPinMainClick(evt) {
     if (evt.button === 0 || evt.key === KEY_ENTER) {
@@ -271,6 +281,7 @@
     setCoordinates,
     mapPinMainClick,
     disableElements,
-    inputAddress
+    inputAddress,
+    activatePage
   };
 })();

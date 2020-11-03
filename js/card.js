@@ -2,13 +2,13 @@
 
 (function () {
   const map = window.data.map;
-  const HOTELS = window.data.HOTELS;
+
   const KEY_ENTER = window.util.KEY_ENTER;
   const KEY_ESCAPE = window.util.KEY_ESCAPE;
   const cardTemplate = document.querySelector(`#card`);
   // функция рендеринга карточки
   function renderCard(index) {
-    const currentHotel = HOTELS[index];
+    const currentHotel = index;
     let cardElement = cardTemplate.content.querySelector(`.map__card`).cloneNode(true);
     cardElement.querySelector(`.popup__title`).textContent = currentHotel.offer.title;
     cardElement.querySelector(`.popup__text--address`).textContent = currentHotel.offer.address;
@@ -69,6 +69,7 @@
     });
 
     map.appendChild(cardElement);
+
   }
 
   window.card = {

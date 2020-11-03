@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  const HOTELS = window.data.HOTELS;
   const MAPPIN_CENTER = window.data.MAPPIN_CENTER;
   const MAPPIN_HEIGHT = window.data.MAPPIN_HEIGHT;
   const map = window.data.map;
@@ -10,18 +9,27 @@
   const mapPins = document.querySelector(`.map__pins`);
 
   // функция рендеринга метки объявления
-  function renderPins(index) {
+  function renderPins(data) {
     const hotelElement = hotelTemplate.content.cloneNode(true);
     const mapPin = hotelElement.querySelector(`.map__pin`);
     const hotelAvatar = mapPin.querySelector(`img`);
-    const currentHotel = HOTELS[index];
+    const currentHotel = data;
 
     hotelAvatar.src = currentHotel.author.avatar;
     hotelAvatar.alt = currentHotel.offer.title;
     mapPin.style.cssText = `left: ${currentHotel.location.x - MAPPIN_CENTER}px; top: ${currentHotel.location.y - MAPPIN_HEIGHT}px;`;
-    mapPin.dataset.id = index;
+    mapPin.dataset.id = data;
 
     return hotelElement;
+  }
+
+  function renderFragmentMapPins(data) {
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < data.length; i++) {
+      fragment.appendChild(renderPins(data[i]));
+    }
+    return mapPins.appendChild(fragment);
   }
 
   map.addEventListener(`click`, function (evt) {
@@ -49,7 +57,8 @@
 
   window.pin = {
     renderPins,
-    mapPins
+    mapPins,
+    renderFragmentMapPins
   };
 
 })();
