@@ -3,8 +3,7 @@
 (function () {
   const map = window.data.map;
   const KEY_ENTER = window.util.KEY_ENTER;
-  const getHotelArray = window.data.getHotelArray;
-  const renderFragmentMapPins = window.map.renderFragmentMapPins;
+  const renderFragmentMapPins = window.pin.renderFragmentMapPins;
   const guestCapacity = window.data.guestCapacity;
   const guestValidation = window.data.guestValidation;
   const priceOfType = window.data.priceOfType;
@@ -13,6 +12,7 @@
   const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
   const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
   const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
+  const getData = window.load.getData;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
   const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -34,17 +34,12 @@
     addAttribute(disabledFormElements, `disabled`);
   };
 
-  const showElements = function () {
-    removeAttribute(disabledFormElements, `disabled`);
-  };
-
   function resetForms() {
     const forms = document.querySelectorAll(`form`);
     for (let i = 0; i < forms.length; i++) {
       forms[i].reset();
     }
   }
-
 
   function removePins() {
     const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
@@ -86,18 +81,30 @@
 
   setCoordinates(false);
 
+
   const activatePage = function () {
-    getHotelArray();
-    renderFragmentMapPins();
-    showElements();
+    removeAttribute(disabledFormElements, `disabled`);
     adForm.classList.remove(`ad-form--disabled`);
     map.classList.remove(`map--faded`);
     setCoordinates(true);
-    mapPinMain.removeEventListener(`click`, mapPinMainClick);
-
+    getData(`https://21.javascript.pages.academy/keksobooking/data`, renderFragmentMapPins, onError);
     mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
+    mapPinMain.removeEventListener(`click`, mapPinMainClick);
+  };
+
+  const onError = function (message) {
+    let node = document.createElement(`div`);
+    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
+    node.style.position = `absolute`;
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = `30px`;
+
+    node.textContent = message;
+    document.body.insertAdjacentElement(`afterbegin`, node);
 
   };
+
 
   function mapPinMainClick(evt) {
     if (evt.button === 0 || evt.key === KEY_ENTER) {
@@ -267,10 +274,10 @@
   window.form = {
     adForm,
     mapPinMain,
-    showElements,
     setCoordinates,
     mapPinMainClick,
     disableElements,
-    inputAddress
+    inputAddress,
+    activatePage
   };
 })();
