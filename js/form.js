@@ -12,7 +12,7 @@
   const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
   const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
   const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
-  // const renderPins = window.pin.renderPins;
+  const getData = window.load.getData;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
   const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -81,33 +81,30 @@
 
   setCoordinates(false);
 
-  const showElements = function (data) {
+
+  const activatePage = function () {
     removeAttribute(disabledFormElements, `disabled`);
-    renderFragmentMapPins(data);
     adForm.classList.remove(`ad-form--disabled`);
     map.classList.remove(`map--faded`);
     setCoordinates(true);
-
+    getData(`https://21.javascript.pages.academy/keksobooking/data`, renderFragmentMapPins, onError);
     mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
     mapPinMain.removeEventListener(`click`, mapPinMainClick);
   };
 
-  const activatePage = function (data) {
-    mapPinMain.addEventListener(`click`, mapPinMainClick);
-    showElements(data);
-
-  };
-
   const onError = function (message) {
-    console.error(message);
+    let node = document.createElement(`div`);
+    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
+    node.style.position = `absolute`;
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = `30px`;
+
+    node.textContent = message;
+    document.body.insertAdjacentElement(`afterbegin`, node);
 
   };
-  const onSuccess = function (data) {
-    activatePage(data);
 
-
-  };
-  window.load(`https://21.javascript.pages.academy/keksobooking/data`, onSuccess, onError);
 
   function mapPinMainClick(evt) {
     if (evt.button === 0 || evt.key === KEY_ENTER) {
@@ -277,7 +274,6 @@
   window.form = {
     adForm,
     mapPinMain,
-    showElements,
     setCoordinates,
     mapPinMainClick,
     disableElements,

@@ -65,6 +65,8 @@
   const MIN_NAME_LENGTH = 30;
   const MAX_NAME_LENGTH = 100;
 
+  const TIMEOUT = 10000;
+
   window.data = {
     TYPES_HOTEL,
     FEATURES,
@@ -81,7 +83,8 @@
     MIN_NAME_LENGTH,
     MAX_NAME_LENGTH,
     getCoordinateX,
-    getCoordinateY
+    getCoordinateY,
+    TIMEOUT
   };
 
 })();

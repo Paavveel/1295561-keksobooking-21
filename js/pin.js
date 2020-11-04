@@ -9,25 +9,24 @@
   const mapPins = document.querySelector(`.map__pins`);
 
   // функция рендеринга метки объявления
-  function renderPins(data) {
+  function renderPins(currentHotel, index) {
     const hotelElement = hotelTemplate.content.cloneNode(true);
     const mapPin = hotelElement.querySelector(`.map__pin`);
     const hotelAvatar = mapPin.querySelector(`img`);
-    const currentHotel = data;
 
     hotelAvatar.src = currentHotel.author.avatar;
     hotelAvatar.alt = currentHotel.offer.title;
     mapPin.style.cssText = `left: ${currentHotel.location.x - MAPPIN_CENTER}px; top: ${currentHotel.location.y - MAPPIN_HEIGHT}px;`;
-    mapPin.dataset.id = data;
+    mapPin.dataset.id = index;
 
     return hotelElement;
   }
 
-  function renderFragmentMapPins(data) {
+  function renderFragmentMapPins(pinsArray) {
     const fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < data.length; i++) {
-      fragment.appendChild(renderPins(data[i]));
+    for (let i = 0; i < pinsArray.length; i++) {
+      fragment.appendChild(renderPins(pinsArray[i], i));
     }
     return mapPins.appendChild(fragment);
   }
