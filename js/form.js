@@ -3,6 +3,7 @@
 (function () {
   const map = window.data.map;
   const KEY_ENTER = window.util.KEY_ENTER;
+  const KEY_ESCAPE = window.util.KEY_ESCAPE;
   const renderFragmentMapPins = window.pin.renderFragmentMapPins;
   const guestCapacity = window.data.guestCapacity;
   const guestValidation = window.data.guestValidation;
@@ -13,6 +14,9 @@
   const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
   const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
   const getData = window.load.getData;
+  const sendData = window.upload.sendData;
+  const popUpError = window.data.popUpError;
+  const popUpSuccess = window.data.popUpSuccess;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
   const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -49,7 +53,7 @@
   }
 
 
-  resetButton.addEventListener(`click`, function () {
+  function returnToDefult() {
     resetForms();
     disableElements();
     removePins();
@@ -62,8 +66,46 @@
     if (prevCard) {
       prevCard.remove();
     }
+  }
 
+  resetButton.addEventListener(`click`, returnToDefult);
+
+  function onSuccess() {
+    returnToDefult();
+    showPopUp(popUpSuccess);
+  }
+
+  function onError() {
+    showPopUp(popUpError);
+
+    const errorButton = popUpError.querySelector(`.error__button`);
+    errorButton.addEventListener(`click`, closePopUp);
+  }
+
+  adForm.addEventListener(`submit`, function (evt) {
+    evt.preventDefault();
+    sendData(new FormData(adForm), onSuccess, onError);
+
+    document.addEventListener(`keydown`, function (e) {
+      if (e.key === KEY_ESCAPE) {
+        e.preventDefault();
+        closePopUp();
+      }
+    });
+    document.addEventListener(`click`, closePopUp);
   });
+
+  function showPopUp(popup) {
+    popup.classList.remove(`hidden`);
+  }
+
+  function closePopUp() {
+    if (!popUpError.classList.contains(`hidden`)) {
+      popUpError.classList.add(`hidden`);
+    } else if (!popUpSuccess.classList.contains(`hidden`)) {
+      popUpSuccess.classList.add(`hidden`);
+    }
+  }
 
   // Заполнение поля адреса
   const inputAddress = document.querySelector(`#address`);
@@ -87,12 +129,12 @@
     adForm.classList.remove(`ad-form--disabled`);
     map.classList.remove(`map--faded`);
     setCoordinates(true);
-    getData(`https://21.javascript.pages.academy/keksobooking/data`, renderFragmentMapPins, onError);
+    getData(`https://21.javascript.pages.academy/keksobooking/data`, renderFragmentMapPins, onErrorGetData);
     mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
     mapPinMain.removeEventListener(`click`, mapPinMainClick);
   };
 
-  const onError = function (message) {
+  const onErrorGetData = function (message) {
     let node = document.createElement(`div`);
     node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
     node.style.position = `absolute`;
