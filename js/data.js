@@ -1,21 +1,6 @@
 'use strict';
 
 (function () {
-  const TYPES_HOTEL = {
-    palace: `Дворец`,
-    flat: `Квартира`,
-    house: `Дом`,
-    bungalow: `Бунгало`
-  };
-
-  const FEATURES = [
-    `wifi`,
-    `dishwasher`,
-    `parking`,
-    `washer`,
-    `elevator`,
-    `conditioner`,
-  ];
 
   const map = document.querySelector(`.map`);
   const YCOORDINATE_FROM = 130;
@@ -65,11 +50,32 @@
   const MIN_NAME_LENGTH = 30;
   const MAX_NAME_LENGTH = 100;
 
+
+  const blockMain = document.querySelector(`main`);
+
+  const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`); // шаблон
+  const popUpSuccess = successTemplate.cloneNode(true); // записываем шаблон в переменную
+  const fragment = document.createDocumentFragment(); // создаем фрагмент
+  fragment.appendChild(popUpSuccess);
+  blockMain.appendChild(fragment); // вставляем фрагмент в html
+  popUpSuccess.classList.add(`hidden`);
+
+
+  const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
+  const popUpError = errorTemplate.cloneNode(true);
+  fragment.appendChild(popUpError);
+  blockMain.appendChild(fragment);
+  popUpError.classList.add(`hidden`);
+
   const TIMEOUT = 10000;
+  const StatusCode = {
+    OK: 200,
+    BadRequest: 400,
+    Unauthorized: 401,
+    NotFound: 404
+  };
 
   window.data = {
-    TYPES_HOTEL,
-    FEATURES,
     map,
     MAPPIN_HEIGHT,
     MAPPIN_WIDTH,
@@ -84,7 +90,11 @@
     MAX_NAME_LENGTH,
     getCoordinateX,
     getCoordinateY,
-    TIMEOUT
+    blockMain,
+    popUpSuccess,
+    popUpError,
+    TIMEOUT,
+    StatusCode
   };
 
 })();

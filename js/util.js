@@ -25,12 +25,60 @@
     return arr[getRandomInt(arr.length)];
   }
 
+
+  const processingRequests = function (url, onSuccess, onError, requestMethod, data) {
+    const StatusCode = window.data.StatusCode;
+    const TIMEOUT = window.data.TIMEOUT;
+    const xhr = new XMLHttpRequest();
+
+    xhr.responseType = `json`;
+
+    xhr.addEventListener(`load`, function () {
+      let error;
+      switch (xhr.status) {
+        case StatusCode.OK:
+          window.hotels = xhr.response; onSuccess(window.hotels);
+          break;
+        case StatusCode.BadRequest:
+          error = `Неверный запрос`;
+          break;
+        case StatusCode.Unauthorized:
+          error = `Пользователь не авторизован`;
+          break;
+        case StatusCode.NotFound:
+          error = `Ничего не найдено`;
+          break;
+
+        default:
+          error = `Cтатус ответа: : ` + xhr.status + ` ` + xhr.statusText;
+      }
+
+      if (error) {
+        onError(error);
+      }
+    });
+
+    xhr.addEventListener(`error`, function () {
+      onError(`Произошла ошибка соединения`);
+    });
+
+    xhr.addEventListener(`timeout`, function () {
+      onError(`Запрос не успел выполниться за ` + xhr.timeout + `мс`);
+    });
+
+    xhr.timeout = TIMEOUT; // 10s
+
+    xhr.open(requestMethod, url);
+    xhr.send(data);
+  };
+
   window.util = {
     KEY_ENTER,
     KEY_ESCAPE,
     getRandomNumber,
     getRandomArr,
     getRandomInt,
-    returnsRandomData
+    returnsRandomData,
+    processingRequests
   };
 })();
