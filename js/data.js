@@ -67,6 +67,14 @@
   blockMain.appendChild(fragment);
   popUpError.classList.add(`hidden`);
 
+  const TIMEOUT = 10000;
+  const StatusCode = {
+    OK: 200,
+    BadRequest: 400,
+    Unauthorized: 401,
+    NotFound: 404
+  };
+
   window.data = {
     map,
     MAPPIN_HEIGHT,
@@ -84,7 +92,9 @@
     getCoordinateY,
     blockMain,
     popUpSuccess,
-    popUpError
+    popUpError,
+    TIMEOUT,
+    StatusCode
   };
 
 })();

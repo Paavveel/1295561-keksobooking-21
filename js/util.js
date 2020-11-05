@@ -27,14 +27,8 @@
 
 
   const processingRequests = function (url, onSuccess, onError, requestMethod, data) {
-    const TIMEOUT = 10000;
-    const statusCode = {
-      OK: 200,
-      BadRequest: 400,
-      Unauthorized: 401,
-      NotFound: 404
-    };
-
+    const StatusCode = window.data.StatusCode;
+    const TIMEOUT = window.data.TIMEOUT;
     const xhr = new XMLHttpRequest();
 
     xhr.responseType = `json`;
@@ -42,16 +36,16 @@
     xhr.addEventListener(`load`, function () {
       let error;
       switch (xhr.status) {
-        case statusCode.OK:
+        case StatusCode.OK:
           window.hotels = xhr.response; onSuccess(window.hotels);
           break;
-        case statusCode.BadRequest:
+        case StatusCode.BadRequest:
           error = `Неверный запрос`;
           break;
-        case statusCode.Unauthorized:
+        case StatusCode.Unauthorized:
           error = `Пользователь не авторизован`;
           break;
-        case statusCode.NotFound:
+        case StatusCode.NotFound:
           error = `Ничего не найдено`;
           break;
 

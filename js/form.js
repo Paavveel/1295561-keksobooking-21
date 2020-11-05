@@ -13,8 +13,8 @@
   const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
   const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
   const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
-  const getData = window.load.getData;
-  const sendData = window.upload.sendData;
+  const getData = window.backend.getData;
+  const sendData = window.backend.sendData;
   const popUpError = window.data.popUpError;
   const popUpSuccess = window.data.popUpSuccess;
   const adForm = document.querySelector(`.ad-form`);
