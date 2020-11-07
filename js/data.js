@@ -10,6 +10,7 @@
   const MAPPIN_HEIGHT = 70;
   const MAPPIN_WIDTH = 50;
   const MAPPIN_CENTER = MAPPIN_WIDTH / 2;
+  const MAX_PINS = 5;
 
   const getRandomNumber = window.util.getRandomNumber;
 
@@ -75,11 +76,15 @@
     NotFound: 404
   };
 
+  const PIN_MAIN_X = 570;
+  const PIN_MAIN_Y = 375;
+
   window.data = {
     map,
     MAPPIN_HEIGHT,
     MAPPIN_WIDTH,
     MAPPIN_CENTER,
+    MAX_PINS,
     guestCapacity,
     guestValidation,
     priceOfType,
@@ -94,7 +99,9 @@
     popUpSuccess,
     popUpError,
     TIMEOUT,
-    StatusCode
+    StatusCode,
+    PIN_MAIN_X,
+    PIN_MAIN_Y
   };
 
 })();

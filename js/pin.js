@@ -3,6 +3,7 @@
 (function () {
   const MAPPIN_CENTER = window.data.MAPPIN_CENTER;
   const MAPPIN_HEIGHT = window.data.MAPPIN_HEIGHT;
+  const MAX_PINS = window.data.MAX_PINS;
   const map = window.data.map;
   const renderCard = window.card.renderCard;
   const hotelTemplate = document.querySelector(`#pin`);
@@ -24,8 +25,8 @@
 
   function renderFragmentMapPins(pinsArray) {
     const fragment = document.createDocumentFragment();
-
-    for (let i = 0; i < pinsArray.length; i++) {
+    let pinsArrayLength = pinsArray.length >= MAX_PINS ? MAX_PINS : pinsArray.length;
+    for (let i = 0; i < pinsArrayLength; i++) {
       fragment.appendChild(renderPins(pinsArray[i], i));
     }
     return mapPins.appendChild(fragment);
