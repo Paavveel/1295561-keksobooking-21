@@ -27,6 +27,7 @@
 
 
   const processingRequests = function (url, onSuccess, onError, requestMethod, data) {
+    const MAX_PINS = window.data.MAX_PINS;
     const StatusCode = window.data.StatusCode;
     const TIMEOUT = window.data.TIMEOUT;
     const xhr = new XMLHttpRequest();
@@ -37,7 +38,9 @@
       let error;
       switch (xhr.status) {
         case StatusCode.OK:
-          window.hotels = xhr.response; onSuccess(window.hotels);
+          window.hotels = xhr.response;
+          window.sortedHotels = xhr.response.slice(0, MAX_PINS);
+          onSuccess(window.hotels);
           break;
         case StatusCode.BadRequest:
           error = `Неверный запрос`;

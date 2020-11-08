@@ -17,6 +17,8 @@
   const sendData = window.backend.sendData;
   const popUpError = window.data.popUpError;
   const popUpSuccess = window.data.popUpSuccess;
+  let PIN_MAIN_X = window.data.PIN_MAIN_X;
+  let PIN_MAIN_Y = window.data.PIN_MAIN_Y;
   const adForm = document.querySelector(`.ad-form`);
   const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
   const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -52,6 +54,12 @@
     });
   }
 
+  function setMapPinMainDefault() {
+    mapPinMain.style.left = `${PIN_MAIN_X}px`;
+    mapPinMain.style.top = `${PIN_MAIN_Y}px`;
+    setCoordinates(false);
+  }
+
 
   function returnToDefult() {
     resetForms();
@@ -59,9 +67,11 @@
     removePins();
     adForm.classList.add(`ad-form--disabled`);
     map.classList.add(`map--faded`);
-    setCoordinates(false);
+    setMapPinMainDefault();
+
     const prevCard = document.querySelector(`.map__card`);
     mapPinMain.addEventListener(`click`, mapPinMainClick);
+    mapPinMain.removeEventListener(`mousedown`, mapPinMainMouseDown);
 
     if (prevCard) {
       prevCard.remove();
@@ -109,10 +119,16 @@
 
   // Заполнение поля адреса
   const inputAddress = document.querySelector(`#address`);
+  inputAddress.setAttribute(`readonly`, ``);
 
   function setCoordinates(isPageActive) {
     const distanceLeft = mapPinMain.offsetLeft;
     const distanseTop = mapPinMain.offsetTop;
+
+    if (!PIN_MAIN_X || !PIN_MAIN_Y) {
+      PIN_MAIN_X = distanceLeft;
+      PIN_MAIN_Y = distanseTop;
+    }
     const height = mapPinMain.clientWidth;
     const width = mapPinMain.clientHeight;
     const mainPinX = Math.round(distanceLeft + width / 2);
@@ -320,6 +336,7 @@
     mapPinMainClick,
     disableElements,
     inputAddress,
-    activatePage
+    activatePage,
+    removePins
   };
 })();

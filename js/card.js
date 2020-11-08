@@ -8,7 +8,7 @@
   const cardTemplate = document.querySelector(`#card`);
   // функция рендеринга карточки
   function renderCard(index) {
-    const currentHotel = window.hotels[index];
+    const currentHotel = window.sortedHotels[index];
     let cardElement = cardTemplate.content.querySelector(`.map__card`).cloneNode(true);
     cardElement.querySelector(`.popup__title`).textContent = currentHotel.offer.title;
     cardElement.querySelector(`.popup__text--address`).textContent = currentHotel.offer.address;
