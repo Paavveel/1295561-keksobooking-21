@@ -31,25 +31,27 @@
     }
     return mapPins.appendChild(fragment);
   }
-
-  map.addEventListener(`click`, function (evt) {
+  function removeCard() {
     const mapPinActive = document.querySelector(`.map__pin--active`);
     const prevCard = document.querySelector(`.map__card`);
-    if (evt.target.classList.contains(`map__pin`) && !evt.target.classList.contains(`map__pin--main`)) {
-      if (mapPinActive) {
-        mapPinActive.classList.remove(`map__pin--active`);
-        prevCard.remove();
-      }
 
+    if (mapPinActive) {
+      mapPinActive.classList.remove(`map__pin--active`);
+    }
+    if (prevCard) {
+      prevCard.remove();
+    }
+  }
+  map.addEventListener(`click`, function (evt) {
+
+    if (evt.target.classList.contains(`map__pin`) && !evt.target.classList.contains(`map__pin--main`)) {
+
+      removeCard();
       renderCard(evt.target.dataset.id);
       evt.target.classList.add(`map__pin--active`);
 
     } else if (evt.target.parentElement.classList.contains(`map__pin`) && !evt.target.parentElement.classList.contains(`map__pin--main`)) {
-      if (mapPinActive) {
-        mapPinActive.classList.remove(`map__pin--active`);
-        prevCard.remove();
-      }
-
+      removeCard();
       renderCard(evt.target.parentElement.dataset.id);
       evt.target.parentElement.classList.add(`map__pin--active`);
     }
@@ -58,7 +60,8 @@
   window.pin = {
     renderPins,
     mapPins,
-    renderFragmentMapPins
+    renderFragmentMapPins,
+    removeCard
   };
 
 })();

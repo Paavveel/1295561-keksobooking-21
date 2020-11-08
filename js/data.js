@@ -76,8 +76,8 @@
     NotFound: 404
   };
 
-  const PIN_MAIN_X = 570;
-  const PIN_MAIN_Y = 375;
+  let PIN_MAIN_X;
+  let PIN_MAIN_Y;
 
   window.data = {
     map,
