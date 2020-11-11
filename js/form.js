@@ -18,10 +18,15 @@ const popUpError = window.data.popUpError;
 const popUpSuccess = window.data.popUpSuccess;
 let PIN_MAIN_X = window.data.PIN_MAIN_X;
 let PIN_MAIN_Y = window.data.PIN_MAIN_Y;
+const loadAvatarHandler = window.preview.loadAvatarHandler;
+const loadPhotosHandler = window.preview.loadPhotosHandler;
+const resetPreviews = window.preview.resetPreviews;
 const adForm = document.querySelector(`.ad-form`);
 const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
 const mapPinMain = document.querySelector(`.map__pin--main`);
 const resetButton = document.querySelector(`.ad-form__reset`);
+const avatarSelection = adForm.querySelector(`.ad-form-header__input`);
+const previewSelection = adForm.querySelector(`.ad-form__input`);
 
 const addAttribute = function (elements, attribute) {
   for (let i = 0; i < elements.length; i++) {
@@ -70,6 +75,9 @@ function returnToDefult() {
   const prevCard = document.querySelector(`.map__card`);
   mapPinMain.addEventListener(`click`, mapPinMainClick);
   mapPinMain.removeEventListener(`mousedown`, mapPinMainMouseDown);
+  avatarSelection.removeEventListener(`change`, loadAvatarHandler);
+  previewSelection.removeEventListener(`change`, loadPhotosHandler);
+  resetPreviews();
 
   if (prevCard) {
     prevCard.remove();
@@ -144,6 +152,8 @@ const activatePage = function () {
   getData(`https://21.javascript.pages.academy/keksobooking/data`, renderFragmentMapPins, onErrorGetData);
   mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
   mapPinMain.removeEventListener(`click`, mapPinMainClick);
+  avatarSelection.addEventListener(`change`, loadAvatarHandler);
+  previewSelection.addEventListener(`change`, loadPhotosHandler);
 };
 
 const onErrorGetData = function (message) {
