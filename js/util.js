@@ -23,7 +23,7 @@ function returnsRandomData(arr) {
   return arr[getRandomInt(arr.length)];
 }
 
-const processingRequests = function (url, onSuccess, onError, requestMethod, data) {
+function processingRequests(url, onSuccess, onError, requestMethod, data) {
   const StatusCode = window.data.StatusCode;
   const TIMEOUT = window.data.TIMEOUT;
   const xhr = new XMLHttpRequest();
@@ -38,13 +38,13 @@ const processingRequests = function (url, onSuccess, onError, requestMethod, dat
         window.sortedHotels = xhr.response;
         onSuccess(window.hotels);
         break;
-      case StatusCode.BadRequest:
+      case StatusCode.BAD_REQUEST:
         error = `Неверный запрос`;
         break;
-      case StatusCode.Unauthorized:
+      case StatusCode.UNAUTHORIZED:
         error = `Пользователь не авторизован`;
         break;
-      case StatusCode.NotFound:
+      case StatusCode.NOT_FOUND:
         error = `Ничего не найдено`;
         break;
 
@@ -65,11 +65,11 @@ const processingRequests = function (url, onSuccess, onError, requestMethod, dat
     onError(`Запрос не успел выполниться за ` + xhr.timeout + `мс`);
   });
 
-  xhr.timeout = TIMEOUT; // 10s
+  xhr.timeout = TIMEOUT;
 
   xhr.open(requestMethod, url);
   xhr.send(data);
-};
+}
 
 window.util = {
   KEY_ENTER,

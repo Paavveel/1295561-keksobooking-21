@@ -55,23 +55,23 @@ function checkHousingPrice(pin) {
   return pin.offer.price >= priceToRoom[housingPrice.value].min && pin.offer.price <= priceToRoom[housingPrice.value].max;
 }
 
-const checkHousingFeatures = function (pin) {
+function checkHousingFeatures(pin) {
   let housingCheckbox = document.querySelectorAll(`.map__checkbox:checked`);
 
   return Array.from(housingCheckbox).every(function (feature) {
     return pin.offer.features.indexOf(feature.value) >= 0;
   });
-};
+}
 
 function getAmountOfPins(hotels) {
   const sortedHotels = hotels.slice(0, MAX_PINS);
   window.sortedHotels = sortedHotels.slice(0, MAX_PINS);
   return sortedHotels;
 }
-const updateData = function (hotels) {
+function updateData(hotels) {
   const hotelsFilter = hotels.filter(function (hotel) {
     return checkHousingType(hotel) & checkHousingPrice(hotel) & checkHousingFeatures(hotel) & checkHousingRooms(hotel) & checkHousingGuests(hotel);
   });
   return getAmountOfPins(hotelsFilter);
-};
+}
 

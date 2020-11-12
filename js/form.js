@@ -3,24 +3,24 @@
 const map = window.data.map;
 const KEY_ENTER = window.util.KEY_ENTER;
 const KEY_ESCAPE = window.util.KEY_ESCAPE;
+const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
+const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
+const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
+let PIN_MAIN_X = window.data.PIN_MAIN_X;
+let PIN_MAIN_Y = window.data.PIN_MAIN_Y;
 const renderFragmentMapPins = window.pin.renderFragmentMapPins;
 const guestCapacity = window.data.guestCapacity;
 const guestValidation = window.data.guestValidation;
 const priceOfType = window.data.priceOfType;
-let typeOfHouse = window.data.typeOfHouse;
-let typeOfRoom = window.data.typeOfRoom;
-const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
-const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
-const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
 const getData = window.backend.getData;
 const sendData = window.backend.sendData;
 const popUpError = window.data.popUpError;
 const popUpSuccess = window.data.popUpSuccess;
-let PIN_MAIN_X = window.data.PIN_MAIN_X;
-let PIN_MAIN_Y = window.data.PIN_MAIN_Y;
 const loadAvatarHandler = window.preview.loadAvatarHandler;
 const loadPhotosHandler = window.preview.loadPhotosHandler;
 const resetPreviews = window.preview.resetPreviews;
+let typeOfHouse = window.data.typeOfHouse;
+let typeOfRoom = window.data.typeOfRoom;
 const adForm = document.querySelector(`.ad-form`);
 const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
 const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -28,21 +28,21 @@ const resetButton = document.querySelector(`.ad-form__reset`);
 const avatarSelection = adForm.querySelector(`.ad-form-header__input`);
 const previewSelection = adForm.querySelector(`.ad-form__input`);
 
-const addAttribute = function (elements, attribute) {
+function addAttribute(elements, attribute) {
   for (let i = 0; i < elements.length; i++) {
     elements[i].setAttribute(attribute, ``);
   }
-};
+}
 
-const removeAttribute = function (elements, attribute) {
+function removeAttribute(elements, attribute) {
   for (let i = 0; i < elements.length; i++) {
     elements[i].removeAttribute(attribute, ``);
   }
-};
+}
 
-const disableElements = function () {
+function disableElements() {
   addAttribute(disabledFormElements, `disabled`);
-};
+}
 
 function resetForms() {
   const forms = document.querySelectorAll(`form`);
@@ -144,7 +144,7 @@ function setCoordinates(isPageActive) {
 
 setCoordinates(false);
 
-const activatePage = function () {
+function activatePage() {
   removeAttribute(disabledFormElements, `disabled`);
   adForm.classList.remove(`ad-form--disabled`);
   map.classList.remove(`map--faded`);
@@ -154,9 +154,9 @@ const activatePage = function () {
   mapPinMain.removeEventListener(`click`, mapPinMainClick);
   avatarSelection.addEventListener(`change`, loadAvatarHandler);
   previewSelection.addEventListener(`change`, loadPhotosHandler);
-};
+}
 
-const onErrorGetData = function (message) {
+function onErrorGetData(message) {
   let node = document.createElement(`div`);
   node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
   node.style.position = `absolute`;
@@ -166,8 +166,7 @@ const onErrorGetData = function (message) {
 
   node.textContent = message;
   document.body.insertAdjacentElement(`afterbegin`, node);
-
-};
+}
 
 function mapPinMainClick(evt) {
   if (evt.button === 0 || evt.key === KEY_ENTER) {
@@ -197,7 +196,7 @@ function mapPinMainMouseDown(evt) {
 
   let dragged = false;
 
-  const onMouseMove = function (moveEvt) {
+  function onMouseMove(moveEvt) {
     moveEvt.preventDefault();
 
     dragged = true;
@@ -226,11 +225,9 @@ function mapPinMainMouseDown(evt) {
     } else if (mapPinMain.offsetTop > Coordinates.y.max - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT) {
       mapPinMain.style.top = Coordinates.y.max - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT + `px`;
     }
+  }
 
-
-  };
-
-  const onMouseUp = function (upEvt) {
+  function onMouseUp(upEvt) {
     upEvt.preventDefault();
 
     document.removeEventListener(`mousemove`, onMouseMove);
@@ -244,7 +241,7 @@ function mapPinMainMouseDown(evt) {
       };
       mapPinMain.addEventListener(`click`, onClickPreventDefault);
     }
-  };
+  }
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
@@ -269,7 +266,7 @@ inputTitle.addEventListener(`input`, function (evt) {
 const inputPrice = document.querySelector(`#price`);
 const selectType = document.querySelector(`#type`);
 
-let priceValidation = function (target) {
+function priceValidation(target) {
   const value = target.value;
   if (target.validity.valueMissing) {
     target.setCustomValidity(`Обязательное поле`);
@@ -281,7 +278,7 @@ let priceValidation = function (target) {
     target.setCustomValidity(``);
   }
   target.reportValidity();
-};
+}
 
 inputPrice.addEventListener(`input`, function (evt) {
   priceValidation(evt.target);
@@ -296,7 +293,7 @@ selectType.addEventListener(`change`, function (evt) {
 const roomNumber = document.querySelector(`#room_number`);
 const capacity = document.querySelector(`#capacity`);
 
-const typeOfCapacity = function (target) {
+function typeOfCapacity(target) {
   const value = target.value;
   const isValid = guestCapacity[typeOfRoom].some(function (element) {
     return element === value;
@@ -307,7 +304,7 @@ const typeOfCapacity = function (target) {
     target.setCustomValidity(``);
   }
   target.reportValidity();
-};
+}
 
 roomNumber.addEventListener(`change`, function (evt) {
   typeOfRoom = evt.target.value;

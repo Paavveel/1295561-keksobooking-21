@@ -4,13 +4,20 @@ const map = document.querySelector(`.map`);
 const YCOORDINATE_FROM = 130;
 const YCOORDINATE_TO = 630;
 const XCOORDINATE_TO = map.offsetWidth;
-
 const MAPPIN_HEIGHT = 70;
 const MAPPIN_WIDTH = 50;
 const MAPPIN_CENTER = MAPPIN_WIDTH / 2;
 const MAX_PINS = 5;
-
+const MAIN_ARROW_HEIGHT = 16;
+const MIN_NAME_LENGTH = 30;
+const MAX_NAME_LENGTH = 100;
+const TIMEOUT = 10000;
+let PIN_MAIN_X;
+let PIN_MAIN_Y;
+let typeOfHouse = `flat`;
+let typeOfRoom = `1`;
 const getRandomNumber = window.util.getRandomNumber;
+
 
 function getCoordinateX() {
   return getRandomNumber(MAPPIN_WIDTH, XCOORDINATE_TO - MAPPIN_WIDTH);
@@ -41,38 +48,26 @@ const priceOfType = {
   'palace': 10000
 };
 
-let typeOfHouse = `flat`;
-let typeOfRoom = `1`;
-const MAIN_ARROW_HEIGHT = 16;
-const MIN_NAME_LENGTH = 30;
-const MAX_NAME_LENGTH = 100;
+const StatusCode = {
+  OK: 200,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404
+};
 
 const blockMain = document.querySelector(`main`);
-
-const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`); // шаблон
-const popUpSuccess = successTemplate.cloneNode(true); // записываем шаблон в переменную
-const fragment = document.createDocumentFragment(); // создаем фрагмент
+const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
+const popUpSuccess = successTemplate.cloneNode(true);
+const fragment = document.createDocumentFragment();
 fragment.appendChild(popUpSuccess);
-blockMain.appendChild(fragment); // вставляем фрагмент в html
+blockMain.appendChild(fragment);
 popUpSuccess.classList.add(`hidden`);
-
 
 const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
 const popUpError = errorTemplate.cloneNode(true);
 fragment.appendChild(popUpError);
 blockMain.appendChild(fragment);
 popUpError.classList.add(`hidden`);
-
-const TIMEOUT = 10000;
-const StatusCode = {
-  OK: 200,
-  BadRequest: 400,
-  Unauthorized: 401,
-  NotFound: 404
-};
-
-let PIN_MAIN_X;
-let PIN_MAIN_Y;
 
 window.data = {
   map,

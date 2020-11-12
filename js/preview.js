@@ -10,7 +10,7 @@ const Photo = {
 const previewAvatar = document.querySelector(`.ad-form-header__preview img`);
 const previewPhoto = document.querySelector(`.ad-form__photo`);
 
-const loadPreview = function (evt, preview) {
+function loadPreview(evt, preview) {
   const file = evt.target.files[0];
   const fileName = file.name.toLowerCase();
 
@@ -27,13 +27,13 @@ const loadPreview = function (evt, preview) {
 
     reader.readAsDataURL(file);
   }
-};
+}
 
-const loadAvatarHandler = function (evt) {
+function loadAvatarHandler(evt) {
   loadPreview(evt, previewAvatar);
-};
+}
 
-const loadPhotosHandler = function (evt) {
+function loadPhotosHandler(evt) {
   const roomsImg = document.createElement(`img`);
 
   roomsImg.width = Photo.PHOTO_SIZE;
@@ -43,12 +43,12 @@ const loadPhotosHandler = function (evt) {
   previewPhoto.appendChild(roomsImg);
 
   loadPreview(evt, roomsImg);
-};
+}
 
-const resetPreviews = function () {
+function resetPreviews() {
   previewAvatar.src = `img/muffin-grey.svg`;
   previewPhoto.textContent = ``;
-};
+}
 
 window.preview = {
   loadAvatarHandler,
