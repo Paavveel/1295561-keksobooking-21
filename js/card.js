@@ -1,6 +1,7 @@
 'use strict';
 
 const map = window.data.map;
+const hotelType = window.data.hotelType;
 const KEY_ENTER = window.util.KEY_ENTER;
 const KEY_ESCAPE = window.util.KEY_ESCAPE;
 const cardTemplate = document.querySelector(`#card`);
@@ -11,7 +12,7 @@ function renderCard(index) {
   cardElement.querySelector(`.popup__title`).textContent = currentHotel.offer.title;
   cardElement.querySelector(`.popup__text--address`).textContent = currentHotel.offer.address;
   cardElement.querySelector(`.popup__text--price`).textContent = `${currentHotel.offer.price} ₽/ночь`;
-  cardElement.querySelector(`.popup__type`).textContent = currentHotel.offer.type;
+  cardElement.querySelector(`.popup__type`).textContent = hotelType[currentHotel.offer.type];
   cardElement.querySelector(`.popup__text--capacity`).textContent = `${currentHotel.offer.rooms} комнаты для ${currentHotel.offer.guests} гостей`;
   cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${currentHotel.offer.checkin}, выезд до ${currentHotel.offer.checkout}`;
 
@@ -21,27 +22,34 @@ function renderCard(index) {
     cardFeatures.removeChild(cardFeatures.firstChild);
   }
 
-  for (let i = 0; i < currentHotel.offer.features.length; i++) {
-    let item = document.createElement(`li`);
-    item.classList.add(`popup__feature`);
-    item.classList.add(`popup__feature--${currentHotel.offer.features[i]}`);
-    cardFeatures.appendChild(item);
+  if (currentHotel.offer.features.length === 0) {
+    cardFeatures.remove();
+  } else {
+    for (let i = 0; i < currentHotel.offer.features.length; i++) {
+      let item = document.createElement(`li`);
+      item.classList.add(`popup__feature`);
+      item.classList.add(`popup__feature--${currentHotel.offer.features[i]}`);
+      cardFeatures.appendChild(item);
+    }
   }
-
-  cardElement.querySelector(`.popup__description`).textContent = currentHotel.offer.description;
 
   const cardPhotos = cardElement.querySelector(`.popup__photos`);
 
-  const img = cardPhotos.querySelector(`.popup__photo`);
-  cardPhotos.removeChild(img);
+  if (currentHotel.offer.photos.length === 0) {
+    cardPhotos.remove();
+  } else {
+    const img = cardPhotos.querySelector(`.popup__photo`);
+    cardPhotos.removeChild(img);
 
-  let insertedImg;
-  for (let j = 0; j < currentHotel.offer.photos.length; j++) {
-    insertedImg = img.cloneNode(true);
-    insertedImg.src = currentHotel.offer.photos[j];
-    cardPhotos.appendChild(insertedImg);
+    let insertedImg;
+    for (let j = 0; j < currentHotel.offer.photos.length; j++) {
+      insertedImg = img.cloneNode(true);
+      insertedImg.src = currentHotel.offer.photos[j];
+      cardPhotos.appendChild(insertedImg);
+    }
   }
 
+  cardElement.querySelector(`.popup__description`).textContent = currentHotel.offer.description;
   cardElement.querySelector(`.popup__avatar`).src = currentHotel.author.avatar;
 
   const buttonClose = cardElement.querySelector(`.popup__close`);

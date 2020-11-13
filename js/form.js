@@ -1,6 +1,7 @@
 'use strict';
 
 const map = window.data.map;
+const main = window.data.main;
 const KEY_ENTER = window.util.KEY_ENTER;
 const KEY_ESCAPE = window.util.KEY_ESCAPE;
 const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
@@ -14,8 +15,6 @@ const guestValidation = window.data.guestValidation;
 const priceOfType = window.data.priceOfType;
 const getData = window.backend.getData;
 const sendData = window.backend.sendData;
-const popUpError = window.data.popUpError;
-const popUpSuccess = window.data.popUpSuccess;
 const loadAvatarHandler = window.preview.loadAvatarHandler;
 const loadPhotosHandler = window.preview.loadPhotosHandler;
 const resetPreviews = window.preview.resetPreviews;
@@ -27,6 +26,8 @@ const mapPinMain = document.querySelector(`.map__pin--main`);
 const resetButton = document.querySelector(`.ad-form__reset`);
 const avatarSelection = adForm.querySelector(`.ad-form-header__input`);
 const previewSelection = adForm.querySelector(`.ad-form__input`);
+const successMessage = document.querySelector(`#success`);
+const errorMessage = document.querySelector(`#error`);
 
 function addAttribute(elements, attribute) {
   for (let i = 0; i < elements.length; i++) {
@@ -71,10 +72,9 @@ function returnToDefult() {
   adForm.classList.add(`ad-form--disabled`);
   map.classList.add(`map--faded`);
   setMapPinMainDefault();
-
+  inputPrice.placeholder = priceOfType.flat;
   const prevCard = document.querySelector(`.map__card`);
   mapPinMain.addEventListener(`click`, mapPinMainClick);
-  mapPinMain.removeEventListener(`mousedown`, mapPinMainMouseDown);
   avatarSelection.removeEventListener(`change`, loadAvatarHandler);
   previewSelection.removeEventListener(`change`, loadPhotosHandler);
   resetPreviews();
@@ -86,42 +86,68 @@ function returnToDefult() {
 
 resetButton.addEventListener(`click`, returnToDefult);
 
-function onSuccess() {
-  returnToDefult();
-  showPopUp(popUpSuccess);
+function showSuccessMessage() {
+  const message = successMessage.content.cloneNode(true);
+
+  document.addEventListener(`click`, deleteSuccessMessage);
+  document.addEventListener(`keydown`, deleteSuccessMessageByEsc);
+
+  main.appendChild(message);
 }
 
-function onError() {
-  showPopUp(popUpError);
+function deleteSuccessMessage(evt) {
+  evt.preventDefault();
 
-  const errorButton = popUpError.querySelector(`.error__button`);
-  errorButton.addEventListener(`click`, closePopUp);
+  const message = main.querySelector(`.success`);
+
+  document.removeEventListener(`click`, deleteSuccessMessage);
+  document.removeEventListener(`keydown`, deleteSuccessMessageByEsc);
+
+  main.removeChild(message);
+}
+
+function deleteSuccessMessageByEsc(evt) {
+  if (evt.key === KEY_ESCAPE) {
+    deleteSuccessMessage(evt);
+  }
+}
+
+function showErrorMessage() {
+  const message = errorMessage.content.cloneNode(true);
+  const closeButton = message.querySelector(`.error__button`);
+
+  document.addEventListener(`click`, deleteErrorMessage);
+  document.addEventListener(`keydown`, deleteErrorMessageByEsc);
+
+  closeButton.addEventListener(`click`, deleteErrorMessage);
+
+  main.appendChild(message);
+}
+
+function deleteErrorMessage(evt) {
+  evt.preventDefault();
+
+  const message = main.querySelector(`.error`);
+  const closeButton = message.querySelector(`.error__button`);
+
+  document.removeEventListener(`click`, deleteErrorMessage);
+  document.removeEventListener(`keydown`, deleteErrorMessageByEsc);
+
+  closeButton.removeEventListener(`click`, deleteErrorMessage);
+
+  main.removeChild(message);
+}
+
+function deleteErrorMessageByEsc(evt) {
+  if (evt.key === KEY_ESCAPE) {
+    deleteErrorMessage(evt);
+  }
 }
 
 adForm.addEventListener(`submit`, function (evt) {
   evt.preventDefault();
-  sendData(new FormData(adForm), onSuccess, onError);
-
-  document.addEventListener(`keydown`, function (e) {
-    if (e.key === KEY_ESCAPE) {
-      e.preventDefault();
-      closePopUp();
-    }
-  });
-  document.addEventListener(`click`, closePopUp);
+  sendData(new FormData(adForm), showSuccessMessage, showErrorMessage);
 });
-
-function showPopUp(popup) {
-  popup.classList.remove(`hidden`);
-}
-
-function closePopUp() {
-  if (!popUpError.classList.contains(`hidden`)) {
-    popUpError.classList.add(`hidden`);
-  } else if (!popUpSuccess.classList.contains(`hidden`)) {
-    popUpSuccess.classList.add(`hidden`);
-  }
-}
 
 const inputAddress = document.querySelector(`#address`);
 inputAddress.setAttribute(`readonly`, ``);
@@ -149,8 +175,8 @@ function activatePage() {
   adForm.classList.remove(`ad-form--disabled`);
   map.classList.remove(`map--faded`);
   setCoordinates(true);
-  getData(`https://21.javascript.pages.academy/keksobooking/data`, renderFragmentMapPins, onErrorGetData);
-  mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
+  getData(renderFragmentMapPins, onErrorGetData);
+
   mapPinMain.removeEventListener(`click`, mapPinMainClick);
   avatarSelection.addEventListener(`change`, loadAvatarHandler);
   previewSelection.addEventListener(`change`, loadPhotosHandler);
@@ -336,6 +362,7 @@ window.form = {
   mapPinMain,
   setCoordinates,
   mapPinMainClick,
+  mapPinMainMouseDown,
   disableElements,
   inputAddress,
   activatePage,
