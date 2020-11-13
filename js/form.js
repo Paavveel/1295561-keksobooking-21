@@ -93,6 +93,7 @@ function showSuccessMessage() {
   document.addEventListener(`keydown`, deleteSuccessMessageByEsc);
 
   main.appendChild(message);
+  returnToDefult();
 }
 
 function deleteSuccessMessage(evt) {
@@ -183,7 +184,7 @@ function activatePage() {
 }
 
 function onErrorGetData(message) {
-  let node = document.createElement(`div`);
+  const node = document.createElement(`div`);
   node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
   node.style.position = `absolute`;
   node.style.left = 0;

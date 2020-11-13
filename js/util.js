@@ -9,11 +9,7 @@ function processingRequests(url, onSuccess, onError, requestMethod, data) {
   const TIMEOUT = window.data.TIMEOUT;
   const xhr = new XMLHttpRequest();
 
-  if (requestMethod === `GET`) {
-    xhr.responseType = `json`;
-  } else if (requestMethod === `POST`) {
-    xhr.responseType = `multipart/form-data`;
-  }
+  xhr.responseType = `json`;
 
   xhr.addEventListener(`load`, function () {
     let error;
