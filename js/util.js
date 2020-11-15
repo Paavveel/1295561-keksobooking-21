@@ -2,16 +2,15 @@
 
 const KEY_ENTER = `Enter`;
 const KEY_ESCAPE = `Escape`;
+const TIMEOUT = 10000;
 
-
-function processingRequests(url, onSuccess, onError, requestMethod, data) {
+const processingRequests = (url, onSuccess, onError, requestMethod, data) => {
   const StatusCode = window.data.StatusCode;
-  const TIMEOUT = window.data.TIMEOUT;
   const xhr = new XMLHttpRequest();
 
   xhr.responseType = `json`;
 
-  xhr.addEventListener(`load`, function () {
+  xhr.addEventListener(`load`, () => {
     let error;
     switch (xhr.status) {
       case StatusCode.OK:
@@ -38,11 +37,11 @@ function processingRequests(url, onSuccess, onError, requestMethod, data) {
     }
   });
 
-  xhr.addEventListener(`error`, function () {
+  xhr.addEventListener(`error`, () => {
     onError(`Произошла ошибка соединения`);
   });
 
-  xhr.addEventListener(`timeout`, function () {
+  xhr.addEventListener(`timeout`, () => {
     onError(`Запрос не успел выполниться за ` + xhr.timeout + `мс`);
   });
 
@@ -55,7 +54,7 @@ function processingRequests(url, onSuccess, onError, requestMethod, data) {
   } else if (requestMethod === `POST`) {
     xhr.send(data);
   }
-}
+};
 
 
 window.util = {

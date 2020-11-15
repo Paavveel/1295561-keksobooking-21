@@ -1,12 +1,12 @@
 'use strict';
 
-const map = window.data.map;
-const hotelType = window.data.hotelType;
 const KEY_ENTER = window.util.KEY_ENTER;
 const KEY_ESCAPE = window.util.KEY_ESCAPE;
+const map = window.data.map;
+const hotelType = window.data.hotelType;
 const cardTemplate = document.querySelector(`#card`);
 
-function renderCard(index) {
+const renderCard = (index) => {
   const currentHotel = window.sortedHotels[index];
   let cardElement = cardTemplate.content.querySelector(`.map__card`).cloneNode(true);
   cardElement.querySelector(`.popup__title`).textContent = currentHotel.offer.title;
@@ -25,12 +25,12 @@ function renderCard(index) {
   if (currentHotel.offer.features.length === 0) {
     cardFeatures.remove();
   } else {
-    for (let i = 0; i < currentHotel.offer.features.length; i++) {
+    currentHotel.offer.features.forEach((feature) => {
       let item = document.createElement(`li`);
       item.classList.add(`popup__feature`);
-      item.classList.add(`popup__feature--${currentHotel.offer.features[i]}`);
+      item.classList.add(`popup__feature--${feature}`);
       cardFeatures.appendChild(item);
-    }
+    });
   }
 
   const cardPhotos = cardElement.querySelector(`.popup__photos`);
@@ -42,11 +42,11 @@ function renderCard(index) {
     cardPhotos.removeChild(img);
 
     let insertedImg;
-    for (let j = 0; j < currentHotel.offer.photos.length; j++) {
+    currentHotel.offer.photos.forEach((photo) => {
       insertedImg = img.cloneNode(true);
-      insertedImg.src = currentHotel.offer.photos[j];
+      insertedImg.src = photo;
       cardPhotos.appendChild(insertedImg);
-    }
+    });
   }
 
   cardElement.querySelector(`.popup__description`).textContent = currentHotel.offer.description;
@@ -54,7 +54,7 @@ function renderCard(index) {
 
   const buttonClose = cardElement.querySelector(`.popup__close`);
 
-  buttonClose.addEventListener(`click`, function (evt) {
+  buttonClose.addEventListener(`click`, (evt) => {
     const mapPinActive = document.querySelector(`.map__pin--active`);
     if (evt.button === 0 || evt.key === KEY_ENTER) {
       cardElement.remove();
@@ -62,7 +62,7 @@ function renderCard(index) {
     }
   });
 
-  document.addEventListener(`keydown`, function (evt) {
+  document.addEventListener(`keydown`, (evt) => {
     const mapPinActive = document.querySelector(`.map__pin--active`);
     if (evt.key === KEY_ESCAPE) {
       evt.preventDefault();
@@ -75,9 +75,9 @@ function renderCard(index) {
 
   map.appendChild(cardElement);
 
-}
+};
 
-window.card = {
+window.popup = {
   renderCard
 };
 

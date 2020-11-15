@@ -10,30 +10,30 @@ const Photo = {
 const previewAvatar = document.querySelector(`.ad-form-header__preview img`);
 const previewPhoto = document.querySelector(`.ad-form__photo`);
 
-function loadPreview(evt, preview) {
+const loadPreview = (evt, preview) => {
   const file = evt.target.files[0];
   const fileName = file.name.toLowerCase();
 
-  const matches = FILE_TYPES.some(function (it) {
+  const matches = FILE_TYPES.some((it) => {
     return fileName.endsWith(it);
   });
 
   if (matches) {
     const reader = new FileReader();
 
-    reader.addEventListener(`load`, function () {
+    reader.addEventListener(`load`, () => {
       preview.src = reader.result;
     });
 
     reader.readAsDataURL(file);
   }
-}
+};
 
-function loadAvatarHandler(evt) {
+const onAvatarLoad = (evt) => {
   loadPreview(evt, previewAvatar);
-}
+};
 
-function loadPhotosHandler(evt) {
+const onPhotosLoad = (evt) => {
   const roomsImg = document.createElement(`img`);
 
   roomsImg.width = Photo.PHOTO_SIZE;
@@ -43,15 +43,15 @@ function loadPhotosHandler(evt) {
   previewPhoto.appendChild(roomsImg);
 
   loadPreview(evt, roomsImg);
-}
+};
 
-function resetPreviews() {
+const resetPreviews = () => {
   previewAvatar.src = `img/muffin-grey.svg`;
   previewPhoto.textContent = ``;
-}
+};
 
 window.preview = {
-  loadAvatarHandler,
-  loadPhotosHandler,
+  onAvatarLoad,
+  onPhotosLoad,
   resetPreviews
 };

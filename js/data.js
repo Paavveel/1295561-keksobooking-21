@@ -7,9 +7,8 @@ const MAX_PINS = 5;
 const MAIN_ARROW_HEIGHT = 16;
 const MIN_NAME_LENGTH = 30;
 const MAX_NAME_LENGTH = 100;
-const TIMEOUT = 10000;
-let PIN_MAIN_X;
-let PIN_MAIN_Y;
+let pinMainX;
+let pinMainY;
 let typeOfHouse = `flat`;
 let typeOfRoom = `1`;
 const map = document.querySelector(`.map`);
@@ -67,9 +66,8 @@ window.data = {
   MAIN_ARROW_HEIGHT,
   MIN_NAME_LENGTH,
   MAX_NAME_LENGTH,
-  TIMEOUT,
   StatusCode,
-  PIN_MAIN_X,
-  PIN_MAIN_Y
+  pinMainX,
+  pinMainY
 };
 

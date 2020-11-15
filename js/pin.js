@@ -4,11 +4,11 @@ const MAPPIN_CENTER = window.data.MAPPIN_CENTER;
 const MAPPIN_HEIGHT = window.data.MAPPIN_HEIGHT;
 const MAX_PINS = window.data.MAX_PINS;
 const map = window.data.map;
-const renderCard = window.card.renderCard;
+const renderCard = window.popup.renderCard;
 const hotelTemplate = document.querySelector(`#pin`);
 const mapPins = document.querySelector(`.map__pins`);
 
-function renderPins(currentHotel, index) {
+const renderPins = (currentHotel, index) => {
   const hotelElement = hotelTemplate.content.cloneNode(true);
   const mapPin = hotelElement.querySelector(`.map__pin`);
   const hotelAvatar = mapPin.querySelector(`img`);
@@ -19,18 +19,19 @@ function renderPins(currentHotel, index) {
   mapPin.dataset.id = index;
 
   return hotelElement;
-}
+};
 
-function renderFragmentMapPins(pinsArray) {
+const renderFragmentMapPins = (pinsArray) => {
   const fragment = document.createDocumentFragment();
-  let pinsArrayLength = pinsArray.length >= MAX_PINS ? MAX_PINS : pinsArray.length;
-  for (let i = 0; i < pinsArrayLength; i++) {
-    fragment.appendChild(renderPins(pinsArray[i], i));
-  }
-  return mapPins.appendChild(fragment);
-}
 
-function removeCard() {
+  const newPinsArray = pinsArray.slice(0, MAX_PINS);
+  newPinsArray.forEach((pin, i) => {
+    fragment.appendChild(renderPins(pin, i));
+  });
+  return mapPins.appendChild(fragment);
+};
+
+const removeCard = () => {
   const mapPinActive = document.querySelector(`.map__pin--active`);
   const prevCard = document.querySelector(`.map__card`);
 
@@ -40,9 +41,9 @@ function removeCard() {
   if (prevCard) {
     prevCard.remove();
   }
-}
+};
 
-map.addEventListener(`click`, function (evt) {
+map.addEventListener(`click`, (evt) => {
 
   if (evt.target.classList.contains(`map__pin`) && !evt.target.classList.contains(`map__pin--main`)) {
 

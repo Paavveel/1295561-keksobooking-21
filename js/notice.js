@@ -1,25 +1,25 @@
 'use strict';
 
-const map = window.data.map;
-const main = window.data.main;
 const KEY_ENTER = window.util.KEY_ENTER;
 const KEY_ESCAPE = window.util.KEY_ESCAPE;
 const MAIN_ARROW_HEIGHT = window.data.MAIN_ARROW_HEIGHT;
 const MIN_NAME_LENGTH = window.data.MIN_NAME_LENGTH;
 const MAX_NAME_LENGTH = window.data.MAX_NAME_LENGTH;
-let PIN_MAIN_X = window.data.PIN_MAIN_X;
-let PIN_MAIN_Y = window.data.PIN_MAIN_Y;
+const map = window.data.map;
+const main = window.data.main;
 const renderFragmentMapPins = window.pin.renderFragmentMapPins;
 const guestCapacity = window.data.guestCapacity;
 const guestValidation = window.data.guestValidation;
 const priceOfType = window.data.priceOfType;
 const getData = window.backend.getData;
 const sendData = window.backend.sendData;
-const loadAvatarHandler = window.preview.loadAvatarHandler;
-const loadPhotosHandler = window.preview.loadPhotosHandler;
+const onAvatarLoad = window.preview.onAvatarLoad;
+const onPhotosLoad = window.preview.onPhotosLoad;
 const resetPreviews = window.preview.resetPreviews;
 let typeOfHouse = window.data.typeOfHouse;
 let typeOfRoom = window.data.typeOfRoom;
+let pinMainX = window.data.pinMainX;
+let pinMainY = window.data.pinMainY;
 const adForm = document.querySelector(`.ad-form`);
 const disabledFormElements = document.querySelectorAll(`.ad-form fieldset, .map__filters select, .map__filters fieldset`);
 const mapPinMain = document.querySelector(`.map__pin--main`);
@@ -29,43 +29,44 @@ const previewSelection = adForm.querySelector(`.ad-form__input`);
 const successMessage = document.querySelector(`#success`);
 const errorMessage = document.querySelector(`#error`);
 
-function addAttribute(elements, attribute) {
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].setAttribute(attribute, ``);
-  }
-}
 
-function removeAttribute(elements, attribute) {
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].removeAttribute(attribute, ``);
-  }
-}
+const addAttribute = (elements, attribute) => {
+  elements.forEach((element) => {
+    element.setAttribute(attribute, ``);
+  });
+};
 
-function disableElements() {
+const removeAttribute = (elements, attribute) => {
+  elements.forEach((element) => {
+    element.removeAttribute(attribute, ``);
+  });
+};
+
+const disableElements = () => {
   addAttribute(disabledFormElements, `disabled`);
-}
+};
 
-function resetForms() {
+const resetForms = () => {
   const forms = document.querySelectorAll(`form`);
-  for (let i = 0; i < forms.length; i++) {
-    forms[i].reset();
-  }
-}
+  forms.forEach((form) => {
+    form.reset();
+  });
+};
 
-function removePins() {
+const removePins = () => {
   const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
-  pins.forEach(function (pin) {
+  pins.forEach((pin) => {
     pin.remove();
   });
-}
+};
 
-function setMapPinMainDefault() {
-  mapPinMain.style.left = `${PIN_MAIN_X}px`;
-  mapPinMain.style.top = `${PIN_MAIN_Y}px`;
+const setMapPinMainDefault = () => {
+  mapPinMain.style.left = `${pinMainX}px`;
+  mapPinMain.style.top = `${pinMainY}px`;
   setCoordinates(false);
-}
+};
 
-function returnToDefult() {
+const onReturnToDefult = () => {
   resetForms();
   disableElements();
   removePins();
@@ -74,78 +75,78 @@ function returnToDefult() {
   setMapPinMainDefault();
   inputPrice.placeholder = priceOfType.flat;
   const prevCard = document.querySelector(`.map__card`);
-  mapPinMain.addEventListener(`click`, mapPinMainClick);
-  avatarSelection.removeEventListener(`change`, loadAvatarHandler);
-  previewSelection.removeEventListener(`change`, loadPhotosHandler);
+  mapPinMain.addEventListener(`click`, onMapPinMainClick);
+  avatarSelection.removeEventListener(`change`, onAvatarLoad);
+  previewSelection.removeEventListener(`change`, onPhotosLoad);
   resetPreviews();
 
   if (prevCard) {
     prevCard.remove();
   }
-}
+};
 
-resetButton.addEventListener(`click`, returnToDefult);
+resetButton.addEventListener(`click`, onReturnToDefult);
 
-function showSuccessMessage() {
+const showSuccessMessage = () => {
   const message = successMessage.content.cloneNode(true);
 
-  document.addEventListener(`click`, deleteSuccessMessage);
-  document.addEventListener(`keydown`, deleteSuccessMessageByEsc);
+  document.addEventListener(`click`, onDeleteSuccessMessage);
+  document.addEventListener(`keydown`, onDeleteSuccessMessageByEsc);
 
   main.appendChild(message);
-  returnToDefult();
-}
+  onReturnToDefult();
+};
 
-function deleteSuccessMessage(evt) {
+const onDeleteSuccessMessage = (evt) => {
   evt.preventDefault();
 
   const message = main.querySelector(`.success`);
 
-  document.removeEventListener(`click`, deleteSuccessMessage);
-  document.removeEventListener(`keydown`, deleteSuccessMessageByEsc);
+  document.removeEventListener(`click`, onDeleteSuccessMessage);
+  document.removeEventListener(`keydown`, onDeleteSuccessMessageByEsc);
 
   main.removeChild(message);
-}
+};
 
-function deleteSuccessMessageByEsc(evt) {
+const onDeleteSuccessMessageByEsc = (evt) => {
   if (evt.key === KEY_ESCAPE) {
-    deleteSuccessMessage(evt);
+    onDeleteSuccessMessage(evt);
   }
-}
+};
 
-function showErrorMessage() {
+const showErrorMessage = () => {
   const message = errorMessage.content.cloneNode(true);
   const closeButton = message.querySelector(`.error__button`);
 
-  document.addEventListener(`click`, deleteErrorMessage);
-  document.addEventListener(`keydown`, deleteErrorMessageByEsc);
+  document.addEventListener(`click`, onDeleteErrorMessage);
+  document.addEventListener(`keydown`, onDeleteErrorMessageByEsc);
 
-  closeButton.addEventListener(`click`, deleteErrorMessage);
+  closeButton.addEventListener(`click`, onDeleteErrorMessage);
 
   main.appendChild(message);
-}
+};
 
-function deleteErrorMessage(evt) {
+const onDeleteErrorMessage = (evt) => {
   evt.preventDefault();
 
   const message = main.querySelector(`.error`);
   const closeButton = message.querySelector(`.error__button`);
 
-  document.removeEventListener(`click`, deleteErrorMessage);
-  document.removeEventListener(`keydown`, deleteErrorMessageByEsc);
+  document.removeEventListener(`click`, onDeleteErrorMessage);
+  document.removeEventListener(`keydown`, onDeleteErrorMessageByEsc);
 
-  closeButton.removeEventListener(`click`, deleteErrorMessage);
+  closeButton.removeEventListener(`click`, onDeleteErrorMessage);
 
   main.removeChild(message);
-}
+};
 
-function deleteErrorMessageByEsc(evt) {
+const onDeleteErrorMessageByEsc = (evt) => {
   if (evt.key === KEY_ESCAPE) {
-    deleteErrorMessage(evt);
+    onDeleteErrorMessage(evt);
   }
-}
+};
 
-adForm.addEventListener(`submit`, function (evt) {
+adForm.addEventListener(`submit`, (evt) => {
   evt.preventDefault();
   sendData(new FormData(adForm), showSuccessMessage, showErrorMessage);
 });
@@ -153,37 +154,37 @@ adForm.addEventListener(`submit`, function (evt) {
 const inputAddress = document.querySelector(`#address`);
 inputAddress.setAttribute(`readonly`, ``);
 
-function setCoordinates(isPageActive) {
+const setCoordinates = (isPageActive) => {
   const distanceLeft = mapPinMain.offsetLeft;
   const distanseTop = mapPinMain.offsetTop;
 
-  if (!PIN_MAIN_X || !PIN_MAIN_Y) {
-    PIN_MAIN_X = distanceLeft;
-    PIN_MAIN_Y = distanseTop;
+  if (!pinMainX || !pinMainY) {
+    pinMainX = distanceLeft;
+    pinMainY = distanseTop;
   }
-  const height = mapPinMain.clientWidth;
-  const width = mapPinMain.clientHeight;
+  const height = mapPinMain.clientHeight;
+  const width = mapPinMain.clientWidth;
   const mainPinX = Math.round(distanceLeft + width / 2);
   const mainPinY = isPageActive ? Math.round(distanseTop + height + MAIN_ARROW_HEIGHT) : Math.round(distanseTop + height / 2);
 
   inputAddress.value = `${mainPinX}, ${mainPinY}`;
-}
+};
 
 setCoordinates(false);
 
-function activatePage() {
+const activatePage = () => {
   removeAttribute(disabledFormElements, `disabled`);
   adForm.classList.remove(`ad-form--disabled`);
   map.classList.remove(`map--faded`);
   setCoordinates(true);
   getData(renderFragmentMapPins, onErrorGetData);
 
-  mapPinMain.removeEventListener(`click`, mapPinMainClick);
-  avatarSelection.addEventListener(`change`, loadAvatarHandler);
-  previewSelection.addEventListener(`change`, loadPhotosHandler);
-}
+  mapPinMain.removeEventListener(`click`, onMapPinMainClick);
+  avatarSelection.addEventListener(`change`, onAvatarLoad);
+  previewSelection.addEventListener(`change`, onPhotosLoad);
+};
 
-function onErrorGetData(message) {
+const onErrorGetData = (message) => {
   const node = document.createElement(`div`);
   node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
   node.style.position = `absolute`;
@@ -193,14 +194,14 @@ function onErrorGetData(message) {
 
   node.textContent = message;
   document.body.insertAdjacentElement(`afterbegin`, node);
-}
+};
 
-function mapPinMainClick(evt) {
+const onMapPinMainClick = (evt) => {
   if (evt.button === 0 || evt.key === KEY_ENTER) {
     evt.preventDefault();
     activatePage();
   }
-}
+};
 
 const Coordinates = {
   x: {
@@ -213,7 +214,7 @@ const Coordinates = {
   }
 };
 
-function mapPinMainMouseDown(evt) {
+const onMapPinMainMouseDown = (evt) => {
   evt.preventDefault();
 
   let startCoords = {
@@ -223,7 +224,7 @@ function mapPinMainMouseDown(evt) {
 
   let dragged = false;
 
-  function onMouseMove(moveEvt) {
+  const onMouseMove = (moveEvt) => {
     moveEvt.preventDefault();
 
     dragged = true;
@@ -241,10 +242,10 @@ function mapPinMainMouseDown(evt) {
     mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + `px`;
     mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + `px`;
 
-    if (mapPinMain.offsetLeft < Coordinates.x.min - mapPinMain.offsetWidth / 2) {
-      mapPinMain.style.left = (Coordinates.x.min - mapPinMain.offsetWidth / 2) + `px`;
-    } else if (mapPinMain.offsetLeft > Coordinates.x.max - mapPinMain.offsetWidth / 2) {
-      mapPinMain.style.left = (Coordinates.x.max - mapPinMain.offsetWidth / 2) + `px`;
+    if (mapPinMain.offsetLeft < Coordinates.x.min - Math.round(mapPinMain.offsetWidth / 2)) {
+      mapPinMain.style.left = (Coordinates.x.min - Math.round(mapPinMain.offsetWidth / 2)) + `px`;
+    } else if (mapPinMain.offsetLeft > Coordinates.x.max - Math.round(mapPinMain.offsetWidth / 2)) {
+      mapPinMain.style.left = (Coordinates.x.max - Math.round(mapPinMain.offsetWidth / 2)) + `px`;
     }
 
     if (mapPinMain.offsetTop < Coordinates.y.min - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT) {
@@ -252,31 +253,32 @@ function mapPinMainMouseDown(evt) {
     } else if (mapPinMain.offsetTop > Coordinates.y.max - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT) {
       mapPinMain.style.top = Coordinates.y.max - mapPinMain.offsetHeight - MAIN_ARROW_HEIGHT + `px`;
     }
-  }
+  };
 
-  function onMouseUp(upEvt) {
+  const onMouseUp = (upEvt) => {
     upEvt.preventDefault();
 
     document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
     setCoordinates(true);
 
+    const onClickPreventDefault = (clickEvt) => {
+      clickEvt.preventDefault();
+      mapPinMain.removeEventListener(`click`, onClickPreventDefault);
+    };
+
     if (dragged) {
-      const onClickPreventDefault = function (clickEvt) {
-        clickEvt.preventDefault();
-        mapPinMain.removeEventListener(`click`, onClickPreventDefault);
-      };
       mapPinMain.addEventListener(`click`, onClickPreventDefault);
     }
-  }
+  };
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
-}
+};
 
 const inputTitle = document.querySelector(`#title`);
 
-inputTitle.addEventListener(`input`, function (evt) {
+inputTitle.addEventListener(`input`, (evt) => {
   const valueLength = evt.target.value.length;
   if (evt.target.validity.valueMissing) {
     evt.target.setCustomValidity(`Обязательное поле`);
@@ -293,7 +295,7 @@ inputTitle.addEventListener(`input`, function (evt) {
 const inputPrice = document.querySelector(`#price`);
 const selectType = document.querySelector(`#type`);
 
-function priceValidation(target) {
+const priceValidation = (target) => {
   const value = target.value;
   if (target.validity.valueMissing) {
     target.setCustomValidity(`Обязательное поле`);
@@ -305,13 +307,13 @@ function priceValidation(target) {
     target.setCustomValidity(``);
   }
   target.reportValidity();
-}
+};
 
-inputPrice.addEventListener(`input`, function (evt) {
+inputPrice.addEventListener(`input`, (evt) => {
   priceValidation(evt.target);
 });
 
-selectType.addEventListener(`change`, function (evt) {
+selectType.addEventListener(`change`, (evt) => {
   typeOfHouse = evt.target.value;
   inputPrice.placeholder = priceOfType[evt.target.value];
   priceValidation(inputPrice);
@@ -320,9 +322,9 @@ selectType.addEventListener(`change`, function (evt) {
 const roomNumber = document.querySelector(`#room_number`);
 const capacity = document.querySelector(`#capacity`);
 
-function typeOfCapacity(target) {
+const typeOfCapacity = (target) => {
   const value = target.value;
-  const isValid = guestCapacity[typeOfRoom].some(function (element) {
+  const isValid = guestCapacity[typeOfRoom].some((element) => {
     return element === value;
   });
   if (!isValid) {
@@ -331,24 +333,24 @@ function typeOfCapacity(target) {
     target.setCustomValidity(``);
   }
   target.reportValidity();
-}
+};
 
-roomNumber.addEventListener(`change`, function (evt) {
+roomNumber.addEventListener(`change`, (evt) => {
   typeOfRoom = evt.target.value;
   typeOfCapacity(capacity);
 });
 
-capacity.addEventListener(`change`, function (evt) {
+capacity.addEventListener(`change`, (evt) => {
   typeOfCapacity(evt.target);
 });
 
 const timeIn = document.querySelector(`#timein`);
 const timeOut = document.querySelector(`#timeout`);
 
-timeOut.addEventListener(`change`, function () {
+timeOut.addEventListener(`change`, () => {
   timeIn.value = timeOut.value;
 });
-timeIn.addEventListener(`change`, function () {
+timeIn.addEventListener(`change`, () => {
   timeOut.value = timeIn.value;
 });
 
@@ -358,12 +360,12 @@ const inputFileImages = document.querySelector(`#images`);
 inputFileAvatar.setAttribute(`accept`, `image/*`);
 inputFileImages.setAttribute(`accept`, `image/*`);
 
-window.form = {
+window.notice = {
   adForm,
   mapPinMain,
   setCoordinates,
-  mapPinMainClick,
-  mapPinMainMouseDown,
+  onMapPinMainClick,
+  onMapPinMainMouseDown,
   disableElements,
   inputAddress,
   activatePage,
